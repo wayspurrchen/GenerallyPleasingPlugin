@@ -1,89 +1,81 @@
 package me.theheyway.GPP.AreYouExperienced;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.theheyway.AreYouExperienced.Listeners.AYEPlayerListener;
-import me.theheyway.AreYouExperienced.Listeners.AYEBlockListener;
+import me.theheyway.GPP.GPP;
+import me.theheyway.GPP.Listeners.GPPPlayerListener;
+import me.theheyway.GPP.Listeners.GPPBlockListener;
+
+import static me.theheyway.GPP.AreYouExperienced.Constants.*;
 
 import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class AYE extends JavaPlugin {
-	//THIS IS ERROR RIDDEN--BEWARE
+/*
+ * NOTE ABOUT AYE: It's designed to increase player EXP, HOWEVER, there is no graphical change for when a player
+ * gains EXP. This is UNACCEPTABLE. There is a workaround, which involves dropping experience orbs on the player's location,
+ * but they can only be dropped if their experience value is at least an integer value of 1, which is 1/20th of a whole level
+ * of experience. Therefore, local variables need to store how much of 1/20th of a level of EXP is gained in order to know
+ * when to drop an experience orb. Maybe this should be stored to flatfiles, but PROBABLY NOT because that little amount
+ * of exp is negligible.
+ * 
+ */
+
+public class AYE {
+	Constants constants;
 	
-	public static Server server;
-	public static Constants constants;
+	private GPP plugin;
 	
-	//Command Managers
-	me.theheyway.GPP.AreYouExperienced.General general_commands;
+	static File aye_config_file = new File(AYE_CONFIG_PATH);
+	static FileConfiguration aye_config = null;
 	
-	//Listeners
-	
-	//NO LONGER VALID DURING MERGE INTO GPP--TO BE FIXED LATER
-	
-	//me.theheyway.GPP.Listeners.AYEPlayerListener playerListener = new AYEPlayerListener(this);
-	//me.theheyway.GPP.Listeners.AYEBlockListener blockListener = new AYEBlockListener(this);
-	
-	public static final Logger logger = Logger.getLogger("Minecraft");
-	
-	
-	public AYE() {
-		
-	}
-	
-	public void onEnable() {
-		//A friendly little message
-		PluginDescriptionFile pdfFile = this.getDescription();
-		logger.info(pdfFile.getFullName()+" enabled.");
-		
-		//Set up PluginManager and event handlers
-		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
-		
-		server = getServer();
-		constants = new Constants(this);
-		
-		general_commands = new me.theheyway.AreYouExperienced.General(this);
+	public AYE(GPP plugin) {
+		this.plugin = plugin;
 		
 		//Set up module config
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
-		//Core AYE commands
-		getCommand("aye").setExecutor(general_commands);
-
+		constants = new Constants(plugin, this);
+		
 	}
 	
-	public void onDisable() {
-		PluginDescriptionFile pdfFile = this.getDescription();
-		logger.info(pdfFile.getFullName()+" disabled.");
+	public void reloadConfig() {
+		
+		aye_config = YamlConfiguration.loadConfiguration(aye_config_file);
+		
+	    // Look for defaults in the jar
+	    InputStream defConfigStream = plugin.getResource(AYE_INTERNAL_CONFIG);
+	    if (defConfigStream != null) {
+	        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+	        
+	        aye_config.setDefaults(defConfig);
+	    }
 	}
 	
-	public static void consoleFine(String message) {
-		logger.fine(message);
+	public FileConfiguration getConfig() {
+		if (aye_config == null) {
+			reloadConfig();
+		}
+		return aye_config;
 	}
 	
-	public static void consoleInfo(String message) {
-		logger.info(message);
+	public void saveConfig() {
+		try {
+	        aye_config.save(AYE_CONFIG_PATH);
+	    } catch (IOException ex) {
+	    	GPP.logger.log(Level.SEVERE, "Could not save config to " + aye_config_file, ex);
+	    }
 	}
-	
-	public static void consoleSevere(String message) {
-		logger.severe(message);
-	}
-	
-	public static void consoleWarn(String message) {
-		logger.warning(message);
-	}
-
-	//Debug method
-	/*public void outConfigMap() {
-			Map<String,Object> configMap = getConfig().getAll();
-			for (Map.Entry<String, Object> e : configMap.entrySet())
-				logger.info(e.getKey() + ": " + e.getValue());
-	}*/
 		
 }

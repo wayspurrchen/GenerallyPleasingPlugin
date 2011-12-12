@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import me.theheyway.GPP.AreYouExperienced.AYE;
+import me.theheyway.GPP.Listeners.GPPBlockListener;
 import me.theheyway.GPP.Listeners.GPPPlayerListener;
 import me.theheyway.GPP.Overlord.Overlord;
 import me.theheyway.GPP.Overlord.Ports;
@@ -22,9 +24,11 @@ public class GPP extends JavaPlugin {
 	
 	//Command Managers
 	me.theheyway.GPP.Overlord.Overlord overlord;
+	me.theheyway.GPP.AreYouExperienced.AYE aye;
 	
 	//Listeners
 	me.theheyway.GPP.Listeners.GPPPlayerListener playerListener = new GPPPlayerListener(this); //lolz gppp
+	me.theheyway.GPP.Listeners.GPPBlockListener blockListener = new GPPBlockListener(this); // they make funny sounding consonants--GPPB!!! GPPB gppbbbgplfhth
 	
 	public static final Logger logger = Logger.getLogger("Minecraft");
 	
@@ -42,6 +46,7 @@ public class GPP extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
 		
 		server = getServer();
 		
@@ -63,6 +68,7 @@ public class GPP extends JavaPlugin {
 		saveConfig();
 		
 		overlord = new Overlord(this);
+		aye = new AYE(this);
 	}
 	
 	public void onDisable() {
