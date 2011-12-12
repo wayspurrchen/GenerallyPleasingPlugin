@@ -1,0 +1,59 @@
+#-----------------------------------------------
+# AreYouExperienced v.1.0
+#
+# Please note that a regular level of experience
+# is equivalent to 100 experience points.
+# 
+# IMPORTANT:
+# ALL VALUES MUST HAVE FLOATING POINT DECIMAL
+# FORMAT (0.0, 12.56, 0.23, ETC)
+#-----------------------------------------------
+AreYouExperienced:
+  ore_break_exp:
+    coal_ore: 3.0
+    diamond_ore: 70.0
+    gold_ore: 12.0
+    iron_ore: 10.0
+    lapis_ore: 6.0
+    obsidian: 10.0
+    redstone_ore: 4.0
+  #EXP per movement tick. Keep this tiny.
+  traveling_exp: 0.01
+  #EXP per new chunk generated via discovery.
+  #You may not want to tell your players about
+  #this one if you don't want your map getting HUGE.
+  chunk_discover_exp: 0.5
+  #EXP points to give a player for surviving
+  #until dawn.
+  still_alive_exp: 15.0
+  #EXP per point of damage taken.
+  #1 point of damage = half a heart
+  per_damage_exp: 2.5
+  #Extra EXP for killing a mob. This is NOT
+  #an absolute value. It can only be used to add.
+  #I suppose you could put a negative value here,
+  #but if a player doesn't pick up the orbs,
+  #they'll just lose experience. This is bad.
+  mob_bonus_exp:
+    blaze: 15.0
+    cavespider: 5.0
+    chicken: 0.0
+    creeper: 10.0
+    cow: 0.0
+    enderman: 15.0
+    ghast: 25.0
+    magmacube: 15.0
+    mooshroom: 0
+    pig: 0.0
+    sheep: 0.0
+    silverfish: 2.5
+    skeleton: 5.0
+    slime: 0.25
+    snow_golem: 3.0
+    spider: 5.0
+    spiderjockey: 8.0
+    squid: 0.0
+    villager: 0.0
+    wolf: 5.0
+    zombie: 2.5
+    zombiepigman: 10.0

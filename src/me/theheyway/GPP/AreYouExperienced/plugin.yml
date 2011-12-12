@@ -1,0 +1,31 @@
+name: AreYouExperienced
+main: me.theheyway.AreYouExperienced.AYE
+version: 0.1
+description: >
+             Are You Experienced?
+commands:
+  aye:
+    description: Displays information about AYE.
+    aliases: [areyouexperienced]
+    permission: aye.access
+    usage: /aye - displays information about the plugin
+
+permissions:
+  aye.access:
+    description: Top level access required to use any AYE command.
+    default: true
+  aye.allowed.damageexp:
+    description: Allows players to get bonus exp fro mtaking damage.
+    default: true
+  aye.allowed.miningexp:
+    description: Allows player to get bonus exp from mining.
+    default: true
+  aye.allowed.mobexp:
+    description: Allows player to get bonus exp from killing mobs.
+    default: true
+  aye.allowed.stillalive:
+    description: Allows player to get bonus exp from surviving until dawn.
+    default: true
+  aye.allowed.travelexp:
+    description: Allows player to get bonus exp from traveling.
+    default: true
