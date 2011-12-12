@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class GPP extends JavaPlugin {
 	
-	public static Server server; //Test commit yo
+	public static Server server; //Test commit by crogeniks yo
 	
 	//Command Managers
 	me.theheyway.GPP.Overlord.Overlord overlord;
