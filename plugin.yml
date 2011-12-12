@@ -1,0 +1,147 @@
+name: GPP
+main: me.theheyway.GPP.GPP
+version: 0.1
+description: >
+             Generally Pleasing Plugin plugin.
+commands:
+  gpp:
+    description: Displays information about the GPP.
+    aliases: [generallypleasingplugin]
+    permission: gpp.access
+    usage: /gpp, /generallypleasingplugin - displays information about the plugin
+  clear:
+    description: Remove all items from yourself or another player.
+    permission: gpp.overlord.clear
+    usage: /clear - remove all your items
+  cm:
+    description: Enables or disabled creative mode.
+    aliases: [creative, creativemode]
+    permission: gpp.general.cm
+    usage: /cm, /creative, /creativemode [player] - disable or enable creative mode
+  cr:
+    description: Reloads nearby chunks.
+    aliases: [reloadchunk, chunkreload]
+    permission: gpp.general.cr
+    usage: /cr, /reloadchunk, /chunkreload - reloads nearby chunks
+  freeze:
+    description: Freezes or unfreezes a player.
+    permission: gpp.cruelty.freeze
+    usage: /freeze <player> - freezes/unfreezes a player
+  home:
+    description: Teleport home.
+    permission: gpp.ports.home
+    usage: /home - teleports you home
+  jumpto:
+    description: Jump to crosshair location.
+    aliases: [j]
+    permission: gpp.ports.jumpto
+    usage: /jumpto, /j - jump to crosshair location
+  point:
+    description: Point your compass to spot.
+    permission: gpp.general.point
+    usage: /point - make your compass point to a location
+  put:
+    description: Teleport player to your crosshair.
+    permission: gpp.ports.put
+    usage: /put <player> - teleport player to crosshair
+  sethome:
+    description: Set home.
+    permission: gpp.ports.sethome
+    usage: /sethome - sets your home point
+  setspawn:
+    description: Set world spawn point.
+    permission: gpp.ports.setspawn
+    usage: /setspawn - sets the world spawn point
+  spawn:
+    description: Teleport to spawn.
+    permission: gpp.ports.spawn
+    usage: /spawn - teleports you to spawn
+  strip:
+    description: Strip a player of select items.
+    permission: gpp.overlord.strip
+    usage: /strip <player> <itemlist> - strips a player of select items
+  summon:
+    description: Teleport someone to you.
+    permission: gpp.ports.summon
+    usage: /summon <player> - teleports someone to you
+  tp:
+    description: Teleport to another player.
+    aliases: [teleport]
+    permission: gpp.ports.tp
+    usage: /teleport, /tp - teleports you to another player
+
+permissions:
+  gpp.access:
+    description: Top level access required to use any GPP command.
+    default: true
+  gpp.admin:
+    description: Gives access to admin commands.
+    default: op
+    children:
+      gpp.jumpto: true
+      gpp.put: true
+      gpp.sethomeother: true
+      gpp.setspawn: true
+      gpp.summon: true
+      gpp.tp: true
+      gpp.tpother: true
+  gpp.general.cm:
+    description: Enables or disabled creative mode.
+    default: op
+  gpp.general.cmother:
+    description: Enables or disabled creative mode for another person.
+    default: op
+  gpp.general.cr:
+    description: Reload chunks near you.
+    default: true
+  gpp.general.point:
+    description: Allows player to point their compass to a location.
+    default: true
+  gpp.general.pointplayer:
+    description: Allows player to point their compass at a player.
+    default: op
+  gpp.cruelty.freeze:
+    description: Freeze or unfreeze a player.
+    default: op
+  gpp.overlord.clear:
+    description: Clear your inventory.
+    default: true
+  gpp.overlord.clearother:
+    description: Clear another person's inventory.
+    default: op
+  gpp.overlord.strip:
+    description: Strip certain items from a player.
+    default: op
+  gpp.ports.home:
+    description: Teleport home.
+    default: true
+  gpp.ports.jumpto:
+    description: Jump to location in crosshair.
+    default: op
+  gpp.ports.put:
+    description: Teleport player to your crosshair.
+    default: op
+  gpp.ports.sethome:
+    description: Set home.
+    default: true
+  gpp.ports.sethomeo:
+    description: Set the home of others.
+    default: op
+  gpp.ports.setspawn:
+    description: Set world spawn point.
+    default: op
+  gpp.ports.spawn:
+    description: Teleport to spawn.
+    default: true
+  gpp.ports.summon:
+    description: Teleport someone to you.
+    default: op
+  gpp.ports.summonall:
+    description: Teleport everyone in the server to you.
+    default: op
+  gpp.ports.tp:
+    description: Teleport to another player.
+    default: op
+  gpp.ports.tpother:
+    description: Teleport other players.
+    default: op
