@@ -7,10 +7,12 @@ import java.util.logging.Logger;
 
 import me.theheyway.GPP.AreYouExperienced.AYE;
 import me.theheyway.GPP.Listeners.GPPBlockListener;
+import me.theheyway.GPP.Listeners.GPPEntityListener;
 import me.theheyway.GPP.Listeners.GPPPlayerListener;
 import me.theheyway.GPP.Overlord.Overlord;
 import me.theheyway.GPP.Overlord.Ports;
 import me.theheyway.GPP.Util.DBUtil;
+import me.theheyway.GPP.Util.TimerUtil;
 
 import org.bukkit.Server;
 import org.bukkit.event.Event;
@@ -27,6 +29,7 @@ public class GPP extends JavaPlugin {
 	me.theheyway.GPP.AreYouExperienced.AYE aye;
 	
 	//Listeners
+	me.theheyway.GPP.Listeners.GPPEntityListener entityListener = new GPPEntityListener(this);
 	me.theheyway.GPP.Listeners.GPPPlayerListener playerListener = new GPPPlayerListener(this); //lolz gppp
 	me.theheyway.GPP.Listeners.GPPBlockListener blockListener = new GPPBlockListener(this); // they make funny sounding consonants--GPPB!!! GPPB gppbbbgplfhth
 	
@@ -43,7 +46,9 @@ public class GPP extends JavaPlugin {
 		
 		//Set up PluginManager and event handlers
 		PluginManager pm = this.getServer().getPluginManager();
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
@@ -66,6 +71,9 @@ public class GPP extends JavaPlugin {
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
 		saveConfig();
+		
+		//For time management
+		new TimerUtil();
 		
 		overlord = new Overlord(this);
 		aye = new AYE(this);

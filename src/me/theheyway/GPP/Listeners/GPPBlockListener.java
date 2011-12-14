@@ -1,19 +1,14 @@
 package me.theheyway.GPP.Listeners;
 
 import me.theheyway.GPP.GPP;
-import me.theheyway.GPP.AreYouExperienced.Constants;
-import me.theheyway.GPP.Util.GenUtil;
+import me.theheyway.GPP.AreYouExperienced.AYE;
+import me.theheyway.GPP.AreYouExperienced.AYEConstants;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public class GPPBlockListener extends BlockListener {
 	
@@ -25,63 +20,37 @@ public class GPPBlockListener extends BlockListener {
 	
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (player.hasPermission("aye.allowed.miningexp")) {
-			GPP.logger.info("permission for mining exp given");
+		if (player.hasPermission("gpp.aye.allowed.miningexp")) {
 			Block block = event.getBlock();
 			Material blockType = block.getType();
 			boolean match = false;
-			int index = -1;
-			for (int i=0; i < Constants.blockList.size(); i++) {
-				GPP.logger.info("checking"+Constants.blockList.get(i));
-				if (blockType.equals(Constants.blockList.get(i))) {
+			
+			int index = -1; //Set to -1 so if it doesn't find a match, the switch statement will fail
+			for (int i=0; i < AYEConstants.blockList.size(); i++) {
+				if (blockType.equals(AYEConstants.blockList.get(i))) {
 					match = true;
 					index = i;
-					GPP.logger.info("match found index "+i);
+					//GPP.logger.info(AYEConstants.blockList.get(i) + " found index "+i);
 					break;
 				}
 			}
 			if (match) {
-				float curExp = player.getExp();
-				GPP.logger.info("current player exp: " + curExp);
-				float expBonus = 0;
+				//GPP.consoleInfo(player.getName() + " broke an ore block");
+				double expBonus = 0;
 				
-				switch (index) {
-					case 0:
-						expBonus = (float) Constants.BREAK_EXP_COALORE;
-						GPP.logger.info("Case 0 found: " + expBonus + " " + expBonus);
-						break;
-					case 1:
-						expBonus = (float) Constants.BREAK_EXP_DIAMONDORE;
-						GPP.logger.info("Case 1 found: " + expBonus + " " + expBonus);
-						break;
-					case 2:
-						expBonus = (float) Constants.BREAK_EXP_GOLDORE;
-						GPP.logger.info("Case 2 found: " + expBonus + " " + expBonus);
-						break;
-					case 3:
-						expBonus = (float) Constants.BREAK_EXP_IRONORE;
-						GPP.logger.info("Case 3 found: " + expBonus + " " + expBonus);
-						break;
-					case 4:
-						expBonus = (float) Constants.BREAK_EXP_LAPISORE;
-						GPP.logger.info("Case 4 found: " + expBonus + " " + expBonus);
-						break;
-					case 5:
-						expBonus = (float) Constants.BREAK_EXP_OBSIDIAN;
-						GPP.logger.info("Case 5 found: " + expBonus + " " + expBonus);
-						break;
-					case 6:
-						expBonus = (float) Constants.BREAK_EXP_REDSTONEORE;
-						GPP.logger.info("Case 6 found: " + expBonus + " " + expBonus);
-						break;
+				//Fugly switch statement for setting the exp bonus
+				switch (index) { //EFFICACY!!!
+					case 0:	expBonus = AYEConstants.BREAK_EXP_COALORE; break;
+					case 1:	expBonus = AYEConstants.BREAK_EXP_DIAMONDORE; break;
+					case 2:	expBonus = AYEConstants.BREAK_EXP_GOLDORE; break;
+					case 3:	expBonus = AYEConstants.BREAK_EXP_IRONORE; break;
+					case 4:	expBonus = AYEConstants.BREAK_EXP_LAPISORE;	break;
+					case 5: expBonus = AYEConstants.BREAK_EXP_OBSIDIAN; break;
+					case 6: expBonus = AYEConstants.BREAK_EXP_REDSTONEORE; break;
+					case 7: expBonus = AYEConstants.BREAK_EXP_REDSTONEORE; break; // This accounts for GLOWING_REDSTONE_ORE
 				}
-				
-				GPP.logger.info("expBonus: "+expBonus);
-				expBonus *= Constants.EXP_MULTIPLIER;
-				GPP.logger.info("expBonus after multiplier: "+expBonus);
-				player.setExp(curExp + expBonus);
-				GPP.logger.info("new exp: "+player.getExp());
-				GenUtil.updateExp(player);
+				//GPP.consoleInfo("exPBonus s after multiplier: " +expBonus);
+				AYE.addAccumulatedExp(player, expBonus);
 			}
 		}
 	}

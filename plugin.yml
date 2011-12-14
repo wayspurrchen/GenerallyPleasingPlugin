@@ -71,6 +71,9 @@ commands:
     usage: /teleport, /tp - teleports you to another player
 
 permissions:
+  gpp.aye.allowed.miningexp:
+    description: Allows players to get EXP from mining.
+    default: true
   gpp.access:
     description: Top level access required to use any GPP command.
     default: true

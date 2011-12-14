@@ -21,12 +21,4 @@ public class GenUtil {
 		else return null;
 	}
 	
-	public static void updateExp(Player player) {
-		player.setLevel(player.getLevel());
-		ExperienceOrb orb = player.getWorld().spawn(player.getLocation(), ExperienceOrb.class);
-		orb.setExperience(1);
-		GPP.logger.info("Spawned orb, exp: "+orb.getExperience());
-		orb.teleport(player);
-	}
-	
 }

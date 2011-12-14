@@ -3,22 +3,18 @@ package me.theheyway.GPP.AreYouExperienced;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import me.theheyway.GPP.GPP;
-import me.theheyway.GPP.Listeners.GPPPlayerListener;
-import me.theheyway.GPP.Listeners.GPPBlockListener;
 
-import static me.theheyway.GPP.AreYouExperienced.Constants.*;
+import static me.theheyway.GPP.AreYouExperienced.AYEConstants.*;
 
-import org.bukkit.Server;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.Player;
 
 /*
  * NOTE ABOUT AYE: It's designed to increase player EXP, HOWEVER, there is no graphical change for when a player
@@ -31,12 +27,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 
 public class AYE {
-	Constants constants;
+	AYEConstants constants;
 	
 	private GPP plugin;
 	
 	static File aye_config_file = new File(AYE_CONFIG_PATH);
 	static FileConfiguration aye_config = null;
+	static HashMap<Player, Double> expAccumulator = new HashMap<Player, Double>();
 	
 	public AYE(GPP plugin) {
 		this.plugin = plugin;
@@ -46,8 +43,37 @@ public class AYE {
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
-		constants = new Constants(plugin, this);
+		constants = new AYEConstants(plugin, this);
 		
+	}
+	
+	public static void addAccumulatedExp(Player player, double value) {
+		value *= AYEConstants.EXP_MULTIPLIER;
+		double oldVal = 0;
+		if (expAccumulator.get(player)!=null) oldVal = expAccumulator.get(player);
+		setAccumulatedExp(player, oldVal + value);
+	}
+	
+	private static void setAccumulatedExp(Player player, double value) {
+		expAccumulator.put(player, value);
+		//GPP.consoleInfo("Put "+ value+ " into player's expAccumulator slot");
+		if (expAccumulator.get(player) > 1) {
+			//GPP.consoleInfo("Player expAccumulator found to be more than 1: "+expAccumulator.get(player));
+			distributeExp(player);
+		}
+	}
+	
+	static void distributeExp(Player player) {
+		double playerExp = expAccumulator.get(player);
+		//GPP.consoleInfo("Distributing process| CURRENT PLAYER EXP: " + playerExp);
+		double value = Math.floor(playerExp);
+		//GPP.consoleInfo("Distributing process| FLOORED VALUE: " + value);
+		expAccumulator.put(player, playerExp - value);
+		//GPP.consoleInfo("Distributing process| NEW EXPACCUMULATOR VALUE AFTER REMOVING FLOORED FROM CURRENT PLAYER EXP: " + expAccumulator.get(player));
+		ExperienceOrb orb = player.getWorld().spawn(player.getLocation(), ExperienceOrb.class);
+		orb.setExperience((int) value);
+		//GPP.logger.info("Spawned orb on " + player.getName() + ", exp: "+orb.getExperience());
+		orb.teleport(player);
 	}
 	
 	public void reloadConfig() {
@@ -76,6 +102,14 @@ public class AYE {
 	    } catch (IOException ex) {
 	    	GPP.logger.log(Level.SEVERE, "Could not save config to " + aye_config_file, ex);
 	    }
+	}
+	
+	public static void stillAliveReward() {
+		Player[] players = GPP.server.getOnlinePlayers();
+		for (int i = 0; i < players.length; i++) {
+			players[i].sendMessage(ChatColor.YELLOW + "You have survived through the night and gained experience.");
+			addAccumulatedExp(players[i], AYEConstants.STILL_ALIVE_EXP);
+		}
 	}
 		
 }
