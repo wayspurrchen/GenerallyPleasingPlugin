@@ -46,23 +46,39 @@ public class General implements CommandExecutor {
 				if (player.hasPermission("gpp.general.cmother")) {
 					Player target = GenUtil.getPlayerMatch(args[0]);
 					if (target != null) {
-						if (target.getGameMode().compareTo(GameMode.CREATIVE) == 0)
+						if (target.getGameMode().compareTo(GameMode.CREATIVE) == 0) {
 							target.setGameMode(GameMode.SURVIVAL);
-						else
+							target.sendMessage(ChatColor.WHITE
+									+ player.getName() + ChatColor.YELLOW + " has set your gamemode to "
+									+ ChatColor.WHITE + "survival" + ChatColor.YELLOW + ".");
+						} else {
 							target.setGameMode(GameMode.CREATIVE);
+							target.sendMessage(ChatColor.WHITE
+									+ player.getName() + ChatColor.YELLOW + " has set your gamemode to "
+									+ ChatColor.WHITE + "creative" + ChatColor.YELLOW + ".");
+						}
 						return true;
 					} else {
-						player.sendMessage(ChatColor.RED
+						player.sendMessage(ChatColor.DARK_RED
 								+ "Could not find player.");
 						return true;
 					}
 				} else {
 					player.sendMessage(ChatColor.DARK_RED
-							+ "You do not have permissions to do that.");
+							+ "You do not have permission to do that.");
 					return true;
 				}
-			} else {
-				player.sendMessage(ChatColor.DARK_RED + "fail");
+			} else { //Toggle own creative mode
+				if (player.getGameMode().compareTo(GameMode.CREATIVE) == 0) {
+					player.setGameMode(GameMode.SURVIVAL);
+					player.sendMessage(ChatColor.YELLOW + "Toggled gamemode to "
+						+ ChatColor.WHITE + "survival" + ChatColor.YELLOW + ".");
+				} else {
+					player.setGameMode(GameMode.CREATIVE);
+					player.sendMessage(ChatColor.YELLOW + "Toggled gamemode to "
+							+ ChatColor.WHITE + "creative" + ChatColor.YELLOW + ".");
+				}
+				return true;
 			}
 		} else if (CommandUtil.cmdEquals(command, "cr")) { // Chunk Reload TODO:FIX
 			Chunk curChunk = player.getLocation().getBlock().getChunk();
