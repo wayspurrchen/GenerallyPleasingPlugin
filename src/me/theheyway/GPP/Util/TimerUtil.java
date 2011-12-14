@@ -20,7 +20,7 @@ public class TimerUtil extends TimerTask {
 	 * 
 	 */
 	
-	private final static long tick = 3000;
+	private final static long tick = 1000;
 	private static long oldTime = 0;
 	private static long newTime = 0;
 	private static boolean givenAliveBonus = false;
@@ -37,16 +37,15 @@ public class TimerUtil extends TimerTask {
 		//GPP.logger.info("Timer ticking at " + tick + "ms. In game time: " + GPP.server.getWorld("world").getTime() + " oldTime: " + oldTime
 		//		+ " | newTime: " + newTime);
 		//TODO: Make this toggleable, as well as multiworld, and implemented with permissions and AYE module status
-		if (oldTime < 23000 && newTime > 23000) {
+		//TODO: Make this not totally stupid broken
+		/*if (oldTime < 23000 && newTime > 23000) {
 			if (!givenAliveBonus) {
-				AYE.stillAliveReward();
 				givenAliveBonus = true;
-			} else {
-				//No idea if this works
-				givenAliveBonus = false;
+				AYE.stillAliveReward();
 			}
-			//GPP.consoleInfo("Sunrise!");
-		}
+		} else {
+			givenAliveBonus = false;
+		}*/
 		
 	}
 	
