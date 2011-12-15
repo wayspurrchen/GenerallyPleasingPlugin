@@ -7,12 +7,14 @@ import java.util.logging.Logger;
 
 import me.theheyway.GPP.AreYouExperienced.AYE;
 import me.theheyway.GPP.Economos.Economos;
+import me.theheyway.GPP.Economos.EconomosConstants;
 import me.theheyway.GPP.Listeners.GPPBlockListener;
 import me.theheyway.GPP.Listeners.GPPEntityListener;
 import me.theheyway.GPP.Listeners.GPPPlayerListener;
 import me.theheyway.GPP.Overlord.Overlord;
 import me.theheyway.GPP.Overlord.Ports;
 import me.theheyway.GPP.Util.DBUtil;
+import me.theheyway.GPP.Util.SQLUtil;
 import me.theheyway.GPP.Util.TimerUtil;
 
 import org.bukkit.Server;
@@ -88,6 +90,13 @@ public class GPP extends JavaPlugin {
 	}
 	
 	private void dbConstruction() throws SQLException {
+		if (!SQLUtil.databaseExists(Constants.MYSQL_DBNAME)) {
+			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database not found. Creating...");
+			if (SQLUtil.createDatabase(Constants.MYSQL_DBNAME)) {
+				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database " + Constants.MYSQL_DBNAME + " created. Yippee-kay-yay!");
+			}
+		} else if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database found.");
+		
 		if (!DBUtil.tableExists(Ports.DB_LOCATIONS_TABLENAME)) {
 			GPP.logger.info("[GPP] Locations SQLite table not found; creating....");
 			Connection conn = DBUtil.getConnection();
