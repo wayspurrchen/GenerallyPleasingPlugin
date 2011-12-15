@@ -1,12 +1,17 @@
 package me.theheyway.GPP.Listeners;
 
+import me.theheyway.GPP.Constants;
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.AreYouExperienced.AYE;
 import me.theheyway.GPP.AreYouExperienced.AYEConstants;
+import me.theheyway.GPP.Economos.AccountManager;
+import me.theheyway.GPP.Economos.Economos;
+import me.theheyway.GPP.Economos.EconomosConstants;
 import me.theheyway.GPP.Overlord.Cruelty;
 import me.theheyway.GPP.Util.MiscUtil;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
@@ -38,10 +43,13 @@ public class GPPPlayerListener extends PlayerListener {
 		
 	}
 	
-	//MUST REMOVE THIS LATER!!
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		//event.getPlayer().setLevel(0);
-		//event.getPlayer().setExp(0);
+	public void onPlayerJoin(PlayerJoinEvent event){
+		Player player = event.getPlayer();
+		String playerName = player.getName();
+		if(!AccountManager.hasAccountObject(playerName)) {
+			AccountManager.createAccountObject(playerName);
+			if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Account Object created for " + player.getName() + ".");
+		} else if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Account Object already exists for " + player.getName() + ".");
 	}
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {

@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.logging.Logger;
 
 import me.theheyway.GPP.AreYouExperienced.AYE;
+import me.theheyway.GPP.Economos.Economos;
 import me.theheyway.GPP.Listeners.GPPBlockListener;
 import me.theheyway.GPP.Listeners.GPPEntityListener;
 import me.theheyway.GPP.Listeners.GPPPlayerListener;
@@ -27,6 +28,7 @@ public class GPP extends JavaPlugin {
 	//Command Managers
 	me.theheyway.GPP.Overlord.Overlord overlord;
 	me.theheyway.GPP.AreYouExperienced.AYE aye;
+	me.theheyway.GPP.Economos.Economos economos;
 	
 	//Listeners
 	me.theheyway.GPP.Listeners.GPPEntityListener entityListener = new GPPEntityListener(this);
@@ -77,6 +79,7 @@ public class GPP extends JavaPlugin {
 		
 		overlord = new Overlord(this);
 		aye = new AYE(this);
+		economos = new Economos(this);
 	}
 	
 	public void onDisable() {

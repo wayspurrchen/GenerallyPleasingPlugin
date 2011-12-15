@@ -1,0 +1,18 @@
+Personal:
+    Name: Wallet
+    Lose on Death: false
+    Initial Balance: 0.0
+    Local Payment: false
+Account:
+    Name: Account
+    Interest:
+        Enabled: true
+        Amount: 5.0E-4
+        Online: true
+        Frequency: 60
+General:
+    Verbose: true
+    Currency:
+        Name:
+            Plural: Credits
+            Singular: Credit
