@@ -8,5 +8,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Way/eclipseworkspace/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Way/eclipseworkspace/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
