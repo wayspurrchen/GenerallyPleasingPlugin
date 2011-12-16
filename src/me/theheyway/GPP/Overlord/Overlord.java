@@ -25,6 +25,7 @@ public class Overlord {
 		plugin.getCommand("cr").setExecutor(general_commands);
 		plugin.getCommand("point").setExecutor(general_commands);
 		plugin.getCommand("cm").setExecutor(general_commands);
+		plugin.getCommand("test").setExecutor(general_commands);
 				
 		//Ports - spawn, homes, warps, teleport commands
 		plugin.getCommand("home").setExecutor(ports_commands);

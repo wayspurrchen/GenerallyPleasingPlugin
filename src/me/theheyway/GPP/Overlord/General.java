@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class General implements CommandExecutor {
 
@@ -41,6 +42,9 @@ public class General implements CommandExecutor {
 					+ " made by" + ChatColor.GREEN + " theheyway"
 					+ ChatColor.WHITE + ".");
 			return true;
+		} else if (CommandUtil.cmdEquals(command, "test")) {
+			SpoutPlayer sPlayer = (SpoutPlayer) player;
+			sPlayer.setTitle(args[0]);
 		} else if (CommandUtil.cmdEquals(command, "cm")) { // Creative mode Toggle
 			if (args.length == 1) {
 				if (player.hasPermission("gpp.general.cmother")) {

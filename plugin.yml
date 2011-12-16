@@ -64,6 +64,9 @@ commands:
     description: Teleport someone to you.
     permission: gpp.ports.summon
     usage: /summon <player> - teleports someone to you
+  test:
+    description: I have no idea what this does.
+    usage: /test
   tp:
     description: Teleport to another player.
     aliases: [teleport]
