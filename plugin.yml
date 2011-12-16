@@ -23,6 +23,20 @@ commands:
     aliases: [reloadchunk, chunkreload]
     permission: gpp.general.cr
     usage: /cr, /reloadchunk, /chunkreload - reloads nearby chunks
+  flip:
+    description: Flips a coin
+    aliases: [flip, flipcoin]
+    permission: gpp.general.flipcoin
+    usage: /flip, /flipcoin, /flip <player2> - Flips a coin
+  flipcoin:
+    description: Flips a coin
+    aliases: [flip, flipcoin]
+    permission: gpp.general.flipcoin
+    usage: /flip, /flipcoin, /flip <player2> - Flips a coin
+  heal:
+    description: Heal a player
+    permission: gpp.general.heal
+    usage: /heal <player> <healAmount>
   freeze:
     description: Freezes or unfreezes a player.
     permission: gpp.cruelty.freeze
@@ -102,6 +116,12 @@ permissions:
     default: true
   gpp.general.pointplayer:
     description: Allows player to point their compass at a player.
+    default: op
+  gpp.general.flipcoin:
+    description: Flips a coin
+    default: true
+  gpp.general.heal:
+    description: Heal a player
     default: op
   gpp.cruelty.freeze:
     description: Freeze or unfreeze a player.

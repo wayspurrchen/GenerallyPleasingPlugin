@@ -124,6 +124,75 @@ public class General implements CommandExecutor {
 						+ "Compass pointing to targeted block.");
 				return true;
 			}
+		} else if(CommandUtil.cmdEquals(command, "flipcoin") //coin flipping
+				|| CommandUtil.cmdEquals(command, "flip")){
+			if (player.hasPermission("gpp.general.flipcoin")) {
+				//result finding
+				double result = Math.random();
+				GPP.logger.info("coin flip : " + result);
+				String message = "";
+				if(result <= 0.5){
+					message = ChatColor.YELLOW
+							+ player.getName() + " flipped a coin. Result is Heads.";
+				} else {
+					message = ChatColor.YELLOW
+							+ player.getName() + " flipped a coin. Result is Tails.";
+				}
+				
+				//message dispatch
+				if(args.length == 0){
+						GPP.server.broadcastMessage(message);
+				} else if(args.length == 1){
+					Player target = GenUtil.getPlayerMatch(args[0]);
+					if(target != null)
+					{
+						player.sendMessage(message);
+						target.sendMessage(message);
+					} else {
+						if(args[0].equals("help")) //Display help
+							return false;
+						
+						player.sendMessage(ChatColor.DARK_RED
+								+ "Could not find player.");
+					}
+				}
+				return true;
+			} else {
+				player.sendMessage(ChatColor.DARK_RED + "You don't have permission to fo that");
+					return true;
+			}
+		} else if (CommandUtil.cmdEquals(command, "heal")){
+			if(player.hasPermission("gpp.general.heal")){
+				if(args.length == 2){
+					Player target = GenUtil.getPlayerMatch(args[0]);
+					
+					if(target != null){
+						int healAmount = Integer.parseInt(args[1]);
+						int health = target.getHealth() + healAmount;
+						
+						//validations
+						if (health > player.getMaxHealth())
+							health = player.getMaxHealth();
+						else if (health < 0)
+							health = 0;
+						
+						//apply changes
+						target.setHealth(health); //YES! Totally mean you can /heal -3;
+					} else {
+						if(args[0].equals("help")) //Display help
+							return false;
+						
+						player.sendMessage(ChatColor.DARK_RED
+								+ "Could not find player.");
+					}
+					return true;
+				} else {
+					return false; //bad usage, help message.
+				}
+			} else{
+				player.sendMessage(ChatColor.DARK_RED + "You don't have permission to fo that");
+				return true;
+			}
 		}
 
 		return false;
