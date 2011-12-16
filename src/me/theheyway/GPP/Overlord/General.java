@@ -6,6 +6,8 @@ import java.util.Set;
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.Util.CommandUtil;
 import me.theheyway.GPP.Util.GenUtil;
+import me.theheyway.GPP.Util.PlayerUtil;
+import me.theheyway.GPP.Util.TypeUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -14,7 +16,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class General implements CommandExecutor {
 
@@ -42,10 +43,6 @@ public class General implements CommandExecutor {
 					+ " made by" + ChatColor.GREEN + " theheyway"
 					+ ChatColor.WHITE + ".");
 			return true;
-		} else if (CommandUtil.cmdEquals(command, "test")) {
-			//testing an external API/plugin, Spout
-			SpoutPlayer sPlayer = (SpoutPlayer) player;
-			sPlayer.setTitle(args[0]);
 		} else if (CommandUtil.cmdEquals(command, "cm")) { // Creative mode Toggle
 			if (args.length == 1) {
 				if (player.hasPermission("gpp.general.cmother")) {
@@ -129,75 +126,72 @@ public class General implements CommandExecutor {
 						+ "Compass pointing to targeted block.");
 				return true;
 			}
-		} else if(CommandUtil.cmdEquals(command, "flipcoin") { //coin flipping
-			if (player.hasPermission("gpp.general.flipcoin")) {
-				//result finding
-				double result = Math.random();
-				GPP.logger.info("coin flip : " + result);
-				String message = "";
-				if(result <= 0.5){
-					message = ChatColor.YELLOW
-							+ player.getName() + " flipped a coin. Result is Heads.";
-				} else {
-					message = ChatColor.YELLOW
-							+ player.getName() + " flipped a coin. Result is Tails.";
-				}
-				
-				//message dispatch
-				if(args.length == 0){
-						GPP.server.broadcastMessage(message);
-				} else if(args.length == 1){
-					Player target = GenUtil.getPlayerMatch(args[0]);
-					if(target != null)
-					{
-						player.sendMessage(message);
-						target.sendMessage(message);
-					} else {
-						if(args[0].equals("help")) //Display help
-							return false;
-						
-						player.sendMessage(ChatColor.DARK_RED
-								+ "Could not find player.");
-					}
-				}
-				return true;
+		} else if(CommandUtil.cmdEquals(command, "flipcoin")) { //coin flipping
+			
+			//result finding
+			double result = Math.random();
+			GPP.logger.info("coin flip : " + result);
+			String message = "";
+			if(result <= 0.5){
+				message = ChatColor.YELLOW
+						+ player.getName() + " flipped a coin. Result is Heads.";
 			} else {
-				player.sendMessage(ChatColor.DARK_RED + "You don't have permission to fo that");
-					return true;
+				message = ChatColor.YELLOW
+						+ player.getName() + " flipped a coin. Result is Tails.";
 			}
-		} else if (CommandUtil.cmdEquals(command, "heal")){
-			if(player.hasPermission("gpp.general.heal")){
+			
+			//message dispatch
+			if (args.length == 0) {
+					GPP.server.broadcastMessage(message);
+			} else if (args.length == 1) {
+				Player target = GenUtil.getPlayerMatch(args[0]);
+				if (target != null) {
+					player.sendMessage(message);
+					target.sendMessage(message);
+				} else {
+					if(args[0].equals("help")) //Display help
+						return false;
+					
+					player.sendMessage(ChatColor.DARK_RED
+							+ "Could not find player.");
+				}
+			}
+			
+			return true;
+			
+		} else if (CommandUtil.cmdEquals(command, "heal")) {
 				if(args.length == 2){
 					Player target = GenUtil.getPlayerMatch(args[0]);
 					
-					if(target != null){
-						int healAmount = Integer.parseInt(args[1]);
-						int health = target.getHealth() + healAmount;
-						
-						//validations
-						if (health > player.getMaxHealth())
-							health = player.getMaxHealth();
-						else if (health < 0)
-							health = 0;
-						
-						//apply changes
-						target.setHealth(health); //YES! Totally mean you can /heal -3;
+					if(target != null) {
+						if (TypeUtil.isInteger(args[1])) { // integer check
+							int amount = Integer.parseInt(args[1]);
+							PlayerUtil.heal(target, amount);
+						} else {
+							player.sendMessage(ChatColor.DARK_RED + "Must enter an integer value.");
+						}
 					} else {
-						if(args[0].equals("help")) //Display help
-							return false;
-						
-						player.sendMessage(ChatColor.DARK_RED
-								+ "Could not find player.");
+						player.sendMessage(ChatColor.DARK_RED + "Could not find player.");
 					}
-					return true;
+						
+				} else if (args.length == 1) {
+					if(args[0].equals("help")) //Display help
+							return false;
+					
+					else {
+						Player target = GenUtil.getPlayerMatch(args[0]);
+						if (target!=null) {
+							int amount = Integer.parseInt(args[1]);
+							PlayerUtil.heal(target, amount);
+						} else {
+							player.sendMessage(ChatColor.DARK_RED + "Could not find player.");
+							return true;
+						}
+					}
 				} else {
-					return false; //bad usage, help message.
+					PlayerUtil.heal(player, 20);
 				}
-			} else{
-				player.sendMessage(ChatColor.DARK_RED + "You don't have permission to fo that");
-				return true;
 			}
-		}
 
 		return false;
 
