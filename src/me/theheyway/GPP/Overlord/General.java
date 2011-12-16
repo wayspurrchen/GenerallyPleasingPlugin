@@ -126,7 +126,7 @@ public class General implements CommandExecutor {
 						+ "Compass pointing to targeted block.");
 				return true;
 			}
-		} else if(CommandUtil.cmdEquals(command, "flipcoin")) { //coin flipping
+		} else if(CommandUtil.cmdEquals(command, "flip")) { //coin flipping
 			
 			//result finding
 			double result = Math.random();
@@ -134,26 +134,34 @@ public class General implements CommandExecutor {
 			String message = "";
 			if(result <= 0.5){
 				message = ChatColor.YELLOW
-						+ player.getName() + " flipped a coin. Result is Heads.";
+						+ player.getName() + " flipped a coin. Heads.";
 			} else {
 				message = ChatColor.YELLOW
-						+ player.getName() + " flipped a coin. Result is Tails.";
+						+ player.getName() + " flipped a coin. Tails.";
 			}
 			
 			//message dispatch
 			if (args.length == 0) {
 					GPP.server.broadcastMessage(message);
+					return true;
 			} else if (args.length == 1) {
 				Player target = GenUtil.getPlayerMatch(args[0]);
 				if (target != null) {
-					player.sendMessage(message);
-					target.sendMessage(message);
+					if (target != player) {
+						player.sendMessage(message);
+						target.sendMessage(message);
+						return true;
+					} else {
+						player.sendMessage(message);
+						return true;
+					}
 				} else {
 					if(args[0].equals("help")) //Display help
 						return false;
 					
 					player.sendMessage(ChatColor.DARK_RED
 							+ "Could not find player.");
+						return true;
 				}
 			}
 			
@@ -167,11 +175,16 @@ public class General implements CommandExecutor {
 						if (TypeUtil.isInteger(args[1])) { // integer check
 							int amount = Integer.parseInt(args[1]);
 							PlayerUtil.heal(target, amount);
+							player.sendMessage(ChatColor.WHITE + target.getName() + ChatColor.YELLOW + " healed by "
+									+ ChatColor.WHITE + amount + ChatColor.YELLOW + "!");
+							return true;
 						} else {
 							player.sendMessage(ChatColor.DARK_RED + "Must enter an integer value.");
+							return true;
 						}
 					} else {
 						player.sendMessage(ChatColor.DARK_RED + "Could not find player.");
+						return true;
 					}
 						
 				} else if (args.length == 1) {
@@ -183,6 +196,8 @@ public class General implements CommandExecutor {
 						if (target!=null) {
 							int amount = Integer.parseInt(args[1]);
 							PlayerUtil.heal(target, amount);
+							player.sendMessage(ChatColor.WHITE + target.getName() + ChatColor.YELLOW + " healed!");
+							return true;
 						} else {
 							player.sendMessage(ChatColor.DARK_RED + "Could not find player.");
 							return true;
@@ -190,6 +205,8 @@ public class General implements CommandExecutor {
 					}
 				} else {
 					PlayerUtil.heal(player, 20);
+					player.sendMessage(ChatColor.YELLOW + "You healed yourself.");
+					return true;
 				}
 			}
 

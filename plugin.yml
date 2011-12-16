@@ -81,6 +81,34 @@ commands:
     aliases: [teleport]
     permission: gpp.ports.tp
     usage: /teleport, /tp - teleports you to another player
+  balance:
+    description: Displays your balance.
+    aliases: [bal, cash, chingching, dough, money, wallet]
+    permission: economos.economy.balance
+    usage:  /balance, /bal, /cash, /money [top [number]] - Display balance [of wealthiest]
+  account:
+    description: Display account information.
+    aliases: [acc]
+    permission: economos.economy.account
+    usage:  /acc help - display more account commands
+  pay:
+    description: Pay another player.
+    aliases: [givemoney]
+    permission: economos.economy.pay
+    usage: /pay OR /givemoney <player> <amount> - Give a user a specified amount of money
+  setbalance:
+    description: Set a user's balance.
+    aliases: [setbal]
+    permission: economos.economy.setbalance
+    usage: /setbalance, /setbal - Set a user's balance
+  cashin:
+    description: Cash in levels for currency.
+    permission: economos.cashin.cashin
+    usage: /cashin <number of levels> - swap in levels for currency
+  exchange:
+    description: Check CashIn's exchange rate.
+    permission: economos.cashin.exchange
+    usage: /exchange - check the exchange rate per experience level
 
 permissions:
   gpp.aye.allowed.miningexp:

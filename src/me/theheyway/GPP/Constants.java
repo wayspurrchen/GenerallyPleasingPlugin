@@ -15,7 +15,7 @@ public class Constants {
 	public static String MYSQL_DBNAME;
 	
 	public static boolean AREYOUEXPERIENCED_ENABLED;
-	public static boolean ECONOMY_ENABLED;
+	public static boolean ECONOMOS_ENABLED;
 	
 	
 	public GPP plugin;
@@ -24,6 +24,9 @@ public class Constants {
 		this.plugin = plugin;
 		
 		VERBOSE = plugin.getConfig().getBoolean("General.Verbose", false);
+		
+		AREYOUEXPERIENCED_ENABLED = plugin.getConfig().getBoolean("Modules.AreYouExperienced", true);
+		ECONOMOS_ENABLED = plugin.getConfig().getBoolean("Modules.Economos", false);
 		
 		MYSQL_HOSTNAME = plugin.getConfig().getString("MySQL.hostname");
 		MYSQL_PORT = plugin.getConfig().getInt("MySQL.port");

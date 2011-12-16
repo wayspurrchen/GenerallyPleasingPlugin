@@ -27,6 +27,8 @@ public class GPP extends JavaPlugin {
 	
 	public static Server server; //Test commit by crogeniks yo
 	
+	me.theheyway.GPP.Constants constants;
+	
 	//Command Managers
 	me.theheyway.GPP.Overlord.Overlord overlord;
 	me.theheyway.GPP.AreYouExperienced.AYE aye;
@@ -59,17 +61,7 @@ public class GPP extends JavaPlugin {
 		
 		server = getServer();
 		
-		try {
-			Class.forName("org.sqlite.JDBC");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			dbConstruction();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		constants = new Constants(this);
 		
 		//Set up module config
 		reloadConfig();
@@ -80,43 +72,25 @@ public class GPP extends JavaPlugin {
 		new TimerUtil();
 		
 		overlord = new Overlord(this);
-		aye = new AYE(this);
-		economos = new Economos(this);
+		
+		if (Constants.AREYOUEXPERIENCED_ENABLED) {
+			aye = new AYE(this);
+			GPP.consoleInfo("[GPP] AreYouExperienced module enabled.");
+		} else {
+			GPP.consoleInfo("[GPP] AreYouExperienced module disabled.");
+		}
+		
+		if (Constants.ECONOMOS_ENABLED) {
+			GPP.consoleInfo("[GPP] Economos module enabled.");
+			economos = new Economos(this);
+		} else {
+			GPP.consoleInfo("[GPP] Economos module disabled.");
+		}
 	}
 	
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		logger.info(pdfFile.getFullName()+" disabled.");
-	}
-	
-	private void dbConstruction() throws SQLException {
-		if (!SQLUtil.databaseExists(Constants.MYSQL_DBNAME)) {
-			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database not found. Creating...");
-			if (SQLUtil.createDatabase(Constants.MYSQL_DBNAME)) {
-				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database " + Constants.MYSQL_DBNAME + " created. Yippee-kay-yay!");
-			}
-		} else if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database found.");
-		
-		if (!SQLUtil.tableExists(Ports.DB_LOCATIONS_TABLENAME)) {
-			GPP.logger.info("[GPP] Locations MySQL table not found; creating....");
-			Connection conn = SQLUtil.getConnection();
-			Statement stmt = conn.createStatement();
-			conn.setAutoCommit(false);
-			String execute = "CREATE TABLE " + Ports.DB_LOCATIONS_TABLENAME +
-					" (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-					"type TINYTEXT NOT NULL, " +
-					"name TINYTEXT NOT NULL, " +
-					"owner TINYTEXT NOT NULL, " +
-					"world TINYTEXT NOT NULL," +
-					"x DOUBLE NOT NULL," +
-					"y DOUBLE NOT NULL," +
-					"z DOUBLE NOT NULL," +
-					"yaw DOUBLE NOT NULL)";
-			stmt.executeUpdate(execute);
-			conn.commit();
-			conn.close();
-			GPP.logger.info("[GPP] Locations SQLite table created.");
-		} else GPP.logger.info("[GPP] Locations table found.");
 	}
 	
 	public static void consoleFine(String message) {

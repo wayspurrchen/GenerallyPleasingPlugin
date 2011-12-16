@@ -44,7 +44,7 @@ public class SQLUtil {
 	}
 	
 	public static boolean databaseExists(String databaseName) throws SQLException {
-		Connection conn = SQLUtil.getConnection();
+		Connection conn = SQLUtil.getDefaultConnection();
 		
 		String query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" + databaseName + "'";
 		Statement stat = conn.createStatement();

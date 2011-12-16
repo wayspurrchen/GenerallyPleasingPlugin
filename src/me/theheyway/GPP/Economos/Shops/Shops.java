@@ -30,14 +30,15 @@ public class Shops {
 
 	private void setup() {
 		
-		reloadConfig();
-		getConfig().options().copyDefaults(true);
-		saveConfig();
+		//reloadConfig();
+		//getConfig().options().copyDefaults(true);
+		//saveConfig();
 		
 		constants = new ShopsConstants();
 		commands = new ShopsCommands(plugin);
 	}
 	
+	/*
 	public void reloadConfig() {
 		
 		shops_config = YamlConfiguration.loadConfiguration(shops_config_file);
@@ -65,6 +66,7 @@ public class Shops {
 	    	Economos.logger.log(Level.SEVERE, "Could not save config to " + shops_config_file, ex);
 	    }
 	}
+	*/
 
 }
 		

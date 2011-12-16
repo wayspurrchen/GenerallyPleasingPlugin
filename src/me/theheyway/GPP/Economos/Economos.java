@@ -63,16 +63,13 @@ public class Economos {
 		}
 		
 		//Core Economos commands
-		plugin.getCommand("ec").setExecutor(this.commands);
 		plugin.getCommand("account").setExecutor(this.commands);
 		plugin.getCommand("balance").setExecutor(this.commands);
 		plugin.getCommand("setbalance").setExecutor(this.commands);
 		plugin.getCommand("pay").setExecutor(this.commands);
 
 		//Economos CashIn commands
-		plugin.getCommand("level").setExecutor(this.cashin.commands);
-		plugin.getCommand("setlevel").setExecutor(this.cashin.commands);
-		plugin.getCommand("cashin").setExecutor(this.cashin.commands);
+		//plugin.getCommand("cashin").setExecutor(this.cashin.commands);
 		//plugin.getCommand("exchangerate").setExecutor(this.cashin.commands);
 		
 	}
