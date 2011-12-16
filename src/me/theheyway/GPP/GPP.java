@@ -97,9 +97,9 @@ public class GPP extends JavaPlugin {
 			}
 		} else if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database found.");
 		
-		if (!DBUtil.tableExists(Ports.DB_LOCATIONS_TABLENAME)) {
-			GPP.logger.info("[GPP] Locations SQLite table not found; creating....");
-			Connection conn = DBUtil.getConnection();
+		if (!SQLUtil.tableExists(Ports.DB_LOCATIONS_TABLENAME)) {
+			GPP.logger.info("[GPP] Locations MySQL table not found; creating....");
+			Connection conn = SQLUtil.getConnection();
 			Statement stmt = conn.createStatement();
 			conn.setAutoCommit(false);
 			String execute = "CREATE TABLE " + Ports.DB_LOCATIONS_TABLENAME +
