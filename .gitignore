@@ -1,6 +1,6 @@
 # Compiled source #
 ###################
-*.com
+*.classpath*.com
 *.class
 *.dll
 *.exe
