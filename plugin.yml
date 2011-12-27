@@ -84,30 +84,30 @@ commands:
   balance:
     description: Displays your balance.
     aliases: [bal, cash, chingching, dough, money, wallet]
-    permission: economos.economy.balance
+    permission: gpp.economos.balance
     usage:  /balance, /bal, /cash, /money [top [number]] - Display balance [of wealthiest]
   account:
     description: Display account information.
     aliases: [acc]
-    permission: economos.economy.account
-    usage:  /acc help - display more account commands
+    permission: gpp.economos.account
+    usage: /acc help - display more account commands
   pay:
     description: Pay another player.
     aliases: [givemoney]
-    permission: economos.economy.pay
+    permission: gpp.economos.wallet.pay
     usage: /pay OR /givemoney <player> <amount> - Give a user a specified amount of money
   setbalance:
     description: Set a user's balance.
     aliases: [setbal]
-    permission: economos.economy.setbalance
+    permission: gpp.economos.wallet.setbalance
     usage: /setbalance, /setbal - Set a user's balance
   cashin:
     description: Cash in levels for currency.
-    permission: economos.cashin.cashin
+    permission: gpp.economos.cashin
     usage: /cashin <number of levels> - swap in levels for currency
   exchange:
     description: Check CashIn's exchange rate.
-    permission: economos.cashin.exchange
+    permission: gpp.economos.exchange
     usage: /exchange - check the exchange rate per experience level
 
 permissions:
@@ -193,4 +193,82 @@ permissions:
     default: op
   gpp.ports.tpother:
     description: Teleport other players.
+    default: op
+  gpp.economos.access:
+    description: Top level access required to use any Economos command.
+    default: true
+    children:
+      economos.economy.access: true
+  gpp.economos.admin:
+    description: Allows admin access to Economos Economy.
+    default: op
+    children:
+      gpp.economos.account.peek: true
+      gpp.economos.account.createremote: true
+      gpp.economos.account.setbalance: true
+      gpp.economos.account.setinterest: true
+      gpp.economos.account.setrole: true
+      gpp.economos.wallet.setbalance: true
+  gpp.economos.account:
+    description: Allows user to use account commands.
+    default: true
+  gpp.economos.account.balance:
+    description: Allows user to view account balances.
+    default: true
+  gpp.economos.account.create:
+    description: Allows user to create new accounts.
+    default: true
+  gpp.economos.account.list:
+    description: Allows user to view a list of their accounts.
+    default: true
+  gpp.economos.account.transfer:
+    description: Allows a user to receive and transfer funds between accounts.
+    default: true
+  gpp.economos.account.setactive:
+    description: Allows user to set an account to their active account.
+    default: true
+  gpp.economos.account.peek:
+    description: Allows user to use basic account commands on other player accounts.
+    default: op
+  gpp.economos.account.remotecreate:
+    description: Allows user to create remote accounts under any name, potentially for NPCs.
+    default: op
+  gpp.economos.account.remoteclose:
+    description: Allows user to remotely close accounts with or without users, potentially for NPCs.
+    default: op
+  gpp.economos.account.remotetransfer:
+    description: Allows user to transfer funds between accounts they do not own.
+    default: op
+  gpp.economos.account.setbalance:
+    description: Allows user to set the balance of an account.
+    default: op
+  gpp.economos.account.setinterest:
+    description: Allows user to set the interest of an account.
+    default: op
+  gpp.economos.account.setrole:
+    description: Allows user to set the role of a player to a specific account.
+    default: op
+  gpp.economos.wallet.balance:
+    description: Allows user to check their balance.
+    default: true
+  gpp.economos.wallet.setbalance:
+    description: Allows user to set the balance of a wallet.
+    default: op
+  gpp.economos.wallet.pay:
+    description: Allows user to pay another user.
+    default: true
+  gpp.economos.wallet.payable:
+    description: Allows user to be paid by other users.
+    default: true
+  gpp.economos.wallet.top:
+    description: Allows user to view the richest players on the server.
+    default: true
+  gpp.economos.cashin:
+    description: Allows user to exchange levels for currency.
+    default: true
+  gpp.economos.checkexchange:
+    description: Allows user to check the CashIn exchange rate.
+    default: true
+  gpp.economos.setexchange:
+    description: Allows user to set the CashIn exchange rate.
     default: op

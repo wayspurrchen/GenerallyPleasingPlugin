@@ -58,7 +58,7 @@ public class CashInCommands implements CommandExecutor {
 				if (player.getTotalExperience() >= Integer.parseInt(args[0])) {
 					Double exchangeRate = CashInConstants.CASH_PER_LEVEL;
 					Double cash = Double.valueOf(args[0])*exchangeRate;
-					economos.accMan.incrementIndividualBalance(player.getName(), cash);
+					economos.accMan.incrementWalletBalance(player.getName(), cash);
 					player.setTotalExperience(player.getTotalExperience()-Integer.valueOf(args[0]));
 					player.sendMessage(ChatColor.YELLOW + "You exchanged " + args[0] + " levels for " + cash + ".");
 					player.sendMessage(ChatColor.YELLOW + "Exchange rate: " + ChatColor.WHITE + exchangeRate);

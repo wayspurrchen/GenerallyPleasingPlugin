@@ -17,13 +17,14 @@ import me.theheyway.GPP.Util.SQLUtil;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class Economos {
 	
 	private GPP plugin;
 	
 	public EconomosCommands commands;
-	public AccountManager accMan;
+	public AccountUtil accMan;
 	public EconomosConstants constants;
 	
 	static File economos_config_file = new File(EconomosConstants.ECONOMOS_CONFIG_PATH);
@@ -67,6 +68,16 @@ public class Economos {
 		plugin.getCommand("balance").setExecutor(this.commands);
 		plugin.getCommand("setbalance").setExecutor(this.commands);
 		plugin.getCommand("pay").setExecutor(this.commands);
+		
+		Player players[] = GPP.server.getOnlinePlayers();
+		if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Generating Accountants for already online players...");
+		for (int i=0; i < players.length; i++) {
+			String playerName = players[i].getName();
+			if(!AccountUtil.hasAccountant(playerName)) {
+				AccountUtil.createAccountant(playerName);
+				if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Accountant created for " + players[i].getName() + ".");
+			} else if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Accountant already exists for " + players[i].getName() + ".");
+		}
 
 		//Economos CashIn commands
 		//plugin.getCommand("cashin").setExecutor(this.cashin.commands);

@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.Util.CommandUtil;
-import me.theheyway.GPP.Util.DBUtil;
+import me.theheyway.GPP.Util.SQLUtil;
 import me.theheyway.GPP.Util.GenUtil;
 import me.theheyway.GPP.Util.MiscUtil;
 
@@ -244,12 +244,13 @@ public class Ports implements CommandExecutor {
 		String query = "SELECT * FROM " + DB_LOCATIONS_TABLENAME +
 				" WHERE type='" + type + "' AND name='" + name + "' AND owner='" + owner + "' AND world='" + world + "'";
 		try {
-			Statement stat = DBUtil.beginConnStatement();
+			Connection conn = SQLUtil.getConnection();
+			Statement stat = conn.createStatement();
 			ResultSet rs = stat.executeQuery(query);
 			boolean exists = false;
 			if (rs.next()) exists = true;
 			rs.close();
-			DBUtil.endConn();
+			conn.close();
 			return exists;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -261,7 +262,8 @@ public class Ports implements CommandExecutor {
 		String query = "SELECT x,y,z,yaw FROM " + DB_LOCATIONS_TABLENAME +
 				" WHERE type='" + type + "' AND name='" + name + "' AND owner='" + owner + "' AND world='" + world + "'";
 		try {
-			Statement stat = DBUtil.beginConnStatement();
+			Connection conn = SQLUtil.getConnection();
+			Statement stat = conn.createStatement();
 			ResultSet rs = stat.executeQuery(query);
 			rs.next();
 			double xyzyaw[] = new double[4];
@@ -270,7 +272,7 @@ public class Ports implements CommandExecutor {
 			xyzyaw[2] = rs.getDouble(3);
 			xyzyaw[3] = rs.getDouble(4);
 			rs.close();
-			DBUtil.endConn();
+			conn.close();
 			return xyzyaw;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -303,7 +305,7 @@ public class Ports implements CommandExecutor {
 					", y=" + y + ", z=" + z + ", yaw=" + yaw +
 					" WHERE type='home' AND name='home' AND owner='" + playerName +
 					"' AND world='" + caller.getWorld().getName() + "'";
-			if (DBUtil.transactUpdate(update)) {
+			if (SQLUtil.transactUpdate(update)) {
 				if (caller.getName()!=playerName) {
 					caller.sendMessage(ChatColor.YELLOW + "Home location in " + ChatColor.WHITE + caller.getWorld().getName() +
 							ChatColor.YELLOW + " for " + ChatColor.WHITE + playerName + ChatColor.YELLOW + " updated.");
@@ -318,7 +320,7 @@ public class Ports implements CommandExecutor {
 			String update = "INSERT INTO " + DB_LOCATIONS_TABLENAME + 
 					" (type, name, owner, world, x, y, z, yaw) VALUES ('home', 'home', '" + playerName
 					+ "', '" + caller.getWorld().getName() + "', " + x + ", " + y + ", " + z + ", " + yaw + ")";
-			if (DBUtil.transactUpdate(update)) {
+			if (SQLUtil.transactUpdate(update)) {
 				if (caller.getName()!=playerName) {
 					caller.sendMessage(ChatColor.YELLOW + "Home location for " + ChatColor.WHITE + playerName + ChatColor.YELLOW +
 							" in " + ChatColor.WHITE + caller.getWorld().getName() + ChatColor.YELLOW + " set.");

@@ -4,7 +4,7 @@ import me.theheyway.GPP.Constants;
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.AreYouExperienced.AYE;
 import me.theheyway.GPP.AreYouExperienced.AYEConstants;
-import me.theheyway.GPP.Economos.AccountManager;
+import me.theheyway.GPP.Economos.AccountUtil;
 import me.theheyway.GPP.Economos.Economos;
 import me.theheyway.GPP.Economos.EconomosConstants;
 import me.theheyway.GPP.Overlord.Cruelty;
@@ -46,10 +46,10 @@ public class GPPPlayerListener extends PlayerListener {
 	public void onPlayerJoin(PlayerJoinEvent event){
 		Player player = event.getPlayer();
 		String playerName = player.getName();
-		if(!AccountManager.hasAccountObject(playerName)) {
-			AccountManager.createAccountObject(playerName);
-			if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Account Object created for " + player.getName() + ".");
-		} else if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Account Object already exists for " + player.getName() + ".");
+		if(!AccountUtil.hasAccountant(playerName)) {
+			AccountUtil.createAccountant(playerName);
+			if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Accountant created for " + player.getName() + ".");
+		} else if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Accountant already exists for " + player.getName() + ".");
 	}
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
