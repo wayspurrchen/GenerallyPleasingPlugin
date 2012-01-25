@@ -1,5 +1,7 @@
 package me.theheyway.GPP.Economos;
 
+import java.sql.SQLException;
+
 /**
  * This object represents the direct relationship between an Account and an AccountEntry. It stores the account number,
  * the user using it, their role for it, and their withdraw limit. Accounts can also access their own internal data about
@@ -17,7 +19,7 @@ public class Account {
 	private String role;
 	private double withdrawLimit;
 	
-	protected Account(String playerName, String accountNumber) {
+	protected Account(String playerName, String accountNumber) throws NumberFormatException, SQLException {
 		this.playerName = playerName;
 		this.accountNumber = accountNumber;
 		updateRole();
@@ -26,16 +28,19 @@ public class Account {
 	
 	/**
 	 * Update this Account's role variable in accordance with current MySQL data.
+	 * @throws SQLException 
 	 */
-	public void updateRole() {
+	public void updateRole() throws SQLException {
 		role = AccountUtil.getAccountUserRole(accountNumber, playerName);
 	}
 	
 	/**
 	 * Update this Account's withdrawlimit variable in accordance with current MySQL data.
+	 * @throws SQLException 
+	 * @throws NumberFormatException 
 	 */
-	public void updateWithdrawLimit() {
-		withdrawLimit = AccountUtil.getAccountWithdrawLimit(accountNumber, playerName);
+	public void updateWithdrawLimit() throws NumberFormatException, SQLException {
+		withdrawLimit = AccountUtil.getAccountUserWithdrawLimit(accountNumber, playerName);
 	}
 	
 	public double getWithdrawLimit() {
@@ -50,15 +55,19 @@ public class Account {
 		return accountNumber;
 	}
 	
-	public double getInterest() {
+	public double getInterest() throws NumberFormatException, SQLException {
 		return AccountUtil.getAccountInterest(accountNumber);
 	}
 	
-	public double getBalance() {
+	public void setInterest(double interest) throws SQLException {
+		AccountUtil.setAccountInterest(accountNumber, interest);
+	}
+	
+	public double getBalance() throws NumberFormatException, SQLException {
 		return AccountUtil.getAccountBalance(accountNumber);
 	}
 	
-	public void setBalance(double value) {
+	public void setBalance(double value) throws SQLException {
 		AccountUtil.setAccountBalance(accountNumber, value);
 	}
 	

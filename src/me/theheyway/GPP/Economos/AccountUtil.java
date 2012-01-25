@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 
@@ -29,7 +30,7 @@ public class AccountUtil {
 	
 	
 	
-	public static Accountant createAccountant(String playerName) {
+	public static Accountant createAccountant(String playerName) throws SQLException {
 		Accountant acc = new Accountant(playerName);
 		accounts.add(acc);
 		return acc;
@@ -42,7 +43,7 @@ public class AccountUtil {
 		return false;
 	}
 	
-	public static Accountant guaranteeAccountant(String playerName) {
+	public static Accountant guaranteeAccountant(String playerName) throws SQLException {
 		if (hasAccountant(playerName)) {
 			Accountant acc = getAccountant(playerName);
 			return acc;
@@ -88,11 +89,15 @@ public class AccountUtil {
 		return getAccountant(playerName).getAccountByNumber(accountno);
 	}
 	
-	public static boolean accountNoExists(String accountno) {
+	public static boolean walletExists(String playerName) throws SQLException {
+		return SQLUtil.anyQualifiedValueExists(EconomosConstants.DB_WALLET_TABLENAME, "user", playerName);
+	}
+	
+	public static boolean accountNoExists(String accountno) throws SQLException {
 		return SQLUtil.anyQualifiedValueExists(EconomosConstants.DB_ACCOUNTS_TABLENAME, "accountno", accountno);
 	}
 	
-	public static boolean hasAccountNo(String playerName, String accountno) {
+	public static boolean hasAccountNo(String playerName, String accountno) throws SQLException {
 		return SQLUtil.specificQualifiedValueExists(EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME, accountno, "user", playerName);
 	}
 	
@@ -104,29 +109,27 @@ public class AccountUtil {
 	 * @param accountnumber - Number of account to be made
 	 * @param interest - Interest for account
 	 * @param withdrawlimit - Withdraw limit for player. Set to 0.0 for owners
+	 * @throws SQLException 
 	 */
-	public static boolean createAccountAndAccountEntry(String playerName, String accountnumber, double interest, double withdrawlimit) {
+	public static void createAccountAndAccountEntry(String playerName, String accountnumber, double interest, double withdrawlimit) throws SQLException {
 		if (!accountNoExists(accountnumber)) {
 			//Insert Account into Accounts Table
 			String execute = "INSERT INTO " + EconomosConstants.DB_ACCOUNTS_TABLENAME + " (accountno, balance, interest)" +
 					" VALUES (" + accountnumber + ", " + interest + ", " + EconomosConstants.INTEREST_AMOUNT + ")";
-			if (!SQLUtil.transactUpdate(execute)) {
-				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountnumber + " Account MySQL DB INSERT transaction failed.");
-				return false;
-			}
+			SQLUtil.transactUpdate(execute);
+			//if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountnumber + " Account MySQL DB INSERT transaction failed.");
+			
 			
 			//Insert Account Entry into AccountEntries
 			execute = "INSERT INTO " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME + " (accountno, user, role, withdrawlimit)" +
 					" VALUES (" + accountnumber + ", '" + playerName + "', 'owner', " + withdrawlimit + ")";
-			if (!SQLUtil.transactUpdate(execute)) {
-				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountnumber + " AccountEntry MySQL DB INSERT transaction failed.");
-				return false;
-			}
+			SQLUtil.transactUpdate(execute);
+			//if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountnumber + " AccountEntry MySQL DB INSERT transaction failed.");
+			
 			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountnumber + " created for " + playerName + ".");
-			return true;
+			
 		} else {
 			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Tried to create account " + accountnumber + " but it already exists!");
-			return false;
 		}
 	}
 	
@@ -137,86 +140,58 @@ public class AccountUtil {
 	 * @param accountnumber
 	 * @param interest
 	 * @param withdrawlimit
+	 * @return 
+	 * @throws SQLException 
 	 */
-	public static void createAccount(String accountnumber, double interest) {
+	public static void createAccount(String accountnumber, double interest) throws SQLException {
 		//Insert Account into Accounts Table
 		String execute = "INSERT INTO " + EconomosConstants.DB_ACCOUNTS_TABLENAME + " (accountno, balance, interest)" +
 				" VALUES (" + accountnumber + ", " + interest + ", " + EconomosConstants.INTEREST_AMOUNT + ")";
 		SQLUtil.transactUpdate(execute);
 		if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Bank account " + accountnumber + " created.");
+		
 	}
 	
-	public static boolean createAccountEntry(String playerName, String accountno, double withdrawlimit, String role) {
+	public static void createAccountEntry(String playerName, String accountno, double withdrawlimit, String role) throws SQLException {
 		//TODO: Insert check for duplicates!
 		//Insert Account Entry into AccountEntries
 		String execute = "INSERT INTO " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME + " (accountno, user, role, withdrawlimit)" +
 				" VALUES (" + accountno + ", '" + playerName + "', '" + role + "', " + withdrawlimit + ")";
-		if (SQLUtil.transactUpdate(execute)) {
-			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] AccountEntry created for account " + accountno + " for " + playerName + ".");
-			return true;
-		} else {
-			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] AccountEntry creation MySQL DB transaction for account " + accountno + " for " + playerName + " failed. Check logs for more information.");
-			return false;
-		}
+		SQLUtil.transactUpdate(execute);
+		if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] AccountEntry created for account " + accountno + " for " + playerName + ".");
+		
+		//if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] AccountEntry creation MySQL DB transaction for account " + accountno + " for " + playerName + " failed. Check logs for more information.");
 		
 	}
 	
-	public static boolean deleteAccountEntry(String playerName, String accountno) {
+	public static void deleteAccountEntry(String playerName, String accountno) throws SQLException {
 		//Insert Account Entry into AccountEntries
 		String execute = "DELETE FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME + " WHERE user='" + playerName + "' AND accountno=" + accountno;
-		if (SQLUtil.transactUpdate(execute)) {
-			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] " + playerName + "'s AccountEntry for account " + accountno + " deleted.");
-			return true;
-		} else {
-			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] AccountEntry deletion transaction of " + playerName + "'s account " + accountno + " failed. Check logs for more information.");
-			return false;
-		}
+		SQLUtil.transactUpdate(execute);
+		if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] " + playerName + "'s AccountEntry for account " + accountno + " deleted.");
+		
+		//if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] AccountEntry deletion transaction of " + playerName + "'s account " + accountno + " failed. Check logs for more information.");
+
 	}
 	
-	public static boolean deleteAccount(String accountno) {
+	public static void deleteAccount(String accountno) throws SQLException {
 		//Insert Account Entry into AccountEntries
 		String execute = "DELETE FROM " + EconomosConstants.DB_ACCOUNTS_TABLENAME + " WHERE accountno=" + accountno;
-		if (SQLUtil.transactUpdate(execute)) {
-			execute = "DELETE FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME + " WHERE accountno=" + accountno;
-			if (SQLUtil.transactUpdate(execute)) {
-				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountno + " deleted.");
-				return true;
-			} else {
-				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account deletion transaction of account " + accountno + " failed. Check logs for more information.");
-				return false;
-			}
-		} else {
-			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account deletion transaction of account " + accountno + " failed. Check logs for more information.");
-			return false;
-		}
+		SQLUtil.transactUpdate(execute);
+		
+		execute = "DELETE FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME + " WHERE accountno=" + accountno;
+		SQLUtil.transactUpdate(execute);
+		if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account " + accountno + " deleted.");
+		
+		//if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account deletion transaction of account " + accountno + " failed. Check logs for more information.");
+		
+		//if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP::ECONOMOS] Account deletion transaction of account " + accountno + " failed. Check logs for more information.");
+
 	}
 	
-	public static String getAnyAccount(String playerName) {
+	public static String getAnyAccount(String playerName) throws SQLException {
 		return SQLUtil.getInt("accountno", EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME, "user", playerName);
-		/*String accountEntries = EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME;
-		String query = "SELECT accountno FROM " + accountEntries +
-				" WHERE user='" + playerName + "'";
-		Connection conn = null;
-		try {
-			conn = SQLUtil.getConnection();
-			Statement stat = conn.createStatement();
-			conn.setAutoCommit(false);
-			ResultSet rs = stat.executeQuery(query);
-			rs.next();
-			String accountno = String.valueOf(rs.getInt(1));
-			conn.commit();
-			conn.close();
-			return accountno;
-		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-			return null;
-		}*/
+		
 	}
 	
 	/**
@@ -224,8 +199,9 @@ public class AccountUtil {
 	 * 
 	 * @param accountno
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static ArrayList<Player> getAccountOnlineUsers(String accountno) {
+	public static ArrayList<Player> getAccountOnlineUsers(String accountno) throws SQLException {
 		ArrayList<String> allUsers = getAccountUsers(accountno);
 		ArrayList<Player> onlineUsers = new ArrayList<Player>();
 		if (!allUsers.isEmpty()) {
@@ -243,8 +219,9 @@ public class AccountUtil {
 	 * 
 	 * @param accountno
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static ArrayList<String> getAccountUsers(String accountno) {
+	public static ArrayList<String> getAccountUsers(String accountno) throws SQLException {
 		String query = "SELECT user FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
 				" WHERE accountno=" + accountno;
 		Connection conn = null;
@@ -260,14 +237,11 @@ public class AccountUtil {
 			conn.commit();
 			conn.close();
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 		return users;
 	}
@@ -277,8 +251,9 @@ public class AccountUtil {
 	 * 
 	 * @param accountno
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static ArrayList<String> getAccountOwners(String accountno) {
+	public static ArrayList<String> getAccountOwners(String accountno) throws SQLException {
 		String query = "SELECT user FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
 				" WHERE accountno=" + accountno + " AND role='owner'";
 		Connection conn = null;
@@ -294,19 +269,16 @@ public class AccountUtil {
 			conn.commit();
 			conn.close();
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 		return users;
 	}
 	
-	public static boolean isOwner(String playerName, String accountno) {
+	public static boolean isOwner(String playerName, String accountno) throws SQLException {
 		String query = "SELECT role FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
 				" WHERE accountno=" + accountno + " AND user='" + playerName + "'";
 		Connection conn = null;
@@ -324,19 +296,16 @@ public class AccountUtil {
 			conn.commit();
 			conn.close();
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return false;
+			
+			throw new SQLException();
 		}
 		return isOwner;
 	}
 	
-	public static boolean isUser(String playerName, String accountno) {
+	public static boolean isUser(String playerName, String accountno) throws SQLException {
 		String query = "SELECT role FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
 				" WHERE accountno=" + accountno + " AND user='" + playerName + "'";
 		Connection conn = null;
@@ -355,74 +324,167 @@ public class AccountUtil {
 			conn.commit();
 			conn.close();
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return false;
+			
+			throw new SQLException();
 		}
 		return isUser;
 	}
 	
-	protected static double getWalletBalance(String playerName) {
-		return Double.parseDouble(SQLUtil.getInt("balance", EconomosConstants.DB_WALLET_TABLENAME, "user", playerName));
+	/**
+	 * Heavy function that returns all information regarding a specific player's accounts. Account number, balance, interest, user,
+	 * role, and withdraw limit. Returns an ArrayList of ArrayList<String>s.
+	 * 
+	 * Index setup:
+	 * 0 = accountno
+	 * 1 = balance
+	 * 2 = interest
+	 * 3 = role
+	 * 4 = withdraw limit
+	 * 
+	 * @param playerName
+	 * @return
+	 * @throws SQLException
+	 */
+	public static ArrayList<ArrayList<String>> getAllUserAccountsInfo(String playerName) throws SQLException {
+		//the most terrifying query i've written yet
+		String query = "SELECT Accounts.accountno, Accounts.balance, Accounts.interest, " +
+				"AccountEntries.role, AccountEntries.withdrawlimit FROM AccountEntries INNER JOIN Accounts " +
+				"WHERE AccountEntries.accountno=Accounts.accountno AND AccountEntries.user='" + playerName + "'";
+		Connection conn = null;
+		boolean isUser = false;
+		try {
+			conn = SQLUtil.getConnection();
+			Statement stat = conn.createStatement();
+			conn.setAutoCommit(false);
+			ResultSet rs = stat.executeQuery(query);
+			
+			ArrayList<ArrayList<String>> crazyArray = new ArrayList<ArrayList<String>>();
+			String accountno = "";
+			String balance = "";
+			String interest = "";
+			String role = "";
+			String withdrawlimit = "";
+			if (!rs.next()) return null;
+			do {
+				ArrayList<String> smallerArray = new ArrayList<String>();
+				accountno = String.valueOf(rs.getInt(1));
+				balance = String.valueOf(rs.getDouble(2));
+				interest = String.valueOf(rs.getDouble(3));
+				role = rs.getString(4);
+				withdrawlimit = String.valueOf(rs.getDouble(5));
+				smallerArray.add(accountno);
+				smallerArray.add(balance);
+				smallerArray.add(interest);
+				smallerArray.add(role);
+				smallerArray.add(withdrawlimit);
+				crazyArray.add(smallerArray);
+			} while (rs.next());
+			conn.commit();
+			conn.close();
+			return crazyArray; //this is insane
+		} catch (SQLException e) {
+			conn.rollback();
+			conn.close();
+			e.printStackTrace();
+			
+			throw new SQLException();
+		}
 	}
 	
-	protected static double getAccountBalance(String accountno) {
-		return Double.parseDouble(SQLUtil.getInt("balance", EconomosConstants.DB_ACCOUNTS_TABLENAME, "accountno", accountno));
+	/**
+	 * Return specifiable number pairings of wallet balance and wallet users in descending order.
+	 * 
+	 * @param count - how many pairings to get
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static HashMap<String, Double> getTopWalletPairings(int count) throws SQLException {
+		HashMap<String, Double> map = new HashMap<String, Double>();
+		double[] balances = SQLUtil.getTopDoubles("balance", EconomosConstants.DB_WALLET_TABLENAME, "balance", count);
+		String[] users = SQLUtil.getTopStrings("user", EconomosConstants.DB_WALLET_TABLENAME, "balance", count);
+		for (int i=0; i < count; i++) {
+			map.put(users[i], balances[i]);
+		}
+		return map;
 	}
 	
-	protected static double getAccountInterest(String accountno) {
+	public static double getAccountInterest(String accountno) throws NumberFormatException, SQLException {
 		return Double.parseDouble(SQLUtil.getInt("interest", EconomosConstants.DB_ACCOUNTS_TABLENAME, "accountno", accountno));
 	}
 	
-	protected static String getAccountUserRole(String accountno, String playerName) {
+	public static void setAccountInterest(String accountno, Double interest) throws SQLException {
+		String execute = "UPDATE " + EconomosConstants.DB_ACCOUNTS_TABLENAME +
+				" SET interest=" + interest + " WHERE accountno=" + accountno;
+		SQLUtil.transactUpdate(execute);
+	}
+	
+	public static String getAccountUserRole(String accountno, String playerName) throws SQLException {
 		return SQLUtil.getString("SELECT role FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
 				" WHERE accountno=" + accountno + " AND user='" + playerName + "'");
 	}
 	
-	protected static double getAccountWithdrawLimit(String accountno, String playerName) {
+	public static void setAccountUserRole(String player, String accountno, String role) throws SQLException {
+		String execute = "UPDATE " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
+				" SET role='" + role + "' WHERE accountno=" + accountno + " AND user='" + player + "'";
+		SQLUtil.transactUpdate(execute);
+	}
+	
+	public static double getAccountUserWithdrawLimit(String accountno, String playerName) throws NumberFormatException, SQLException {
 		return Double.parseDouble(SQLUtil.getString("SELECT withdrawlimit FROM " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
 				" WHERE accountno=" + accountno + " AND user='" + playerName + "'"));
 	}
 	
-	public static void setAccountBalance(String accountNo, Double value) {
+	public static void setAccountUserWithdrawLimit(String player, String accountno, Double withdrawlimit) throws SQLException {
+		String execute = "UPDATE " + EconomosConstants.DB_ACCOUNTENTRIES_TABLENAME +
+				" SET withdrawlimit=" + withdrawlimit + " WHERE accountno=" + accountno + " AND user='" + player + "'";
+		SQLUtil.transactUpdate(execute);
+	}
+	
+	public static double getAccountBalance(String accountno) throws NumberFormatException, SQLException {
+		return Double.parseDouble(SQLUtil.getInt("balance", EconomosConstants.DB_ACCOUNTS_TABLENAME, "accountno", accountno));
+	}
+	
+	public static void setAccountBalance(String accountNo, Double value) throws SQLException {
 		String execute = "UPDATE " + EconomosConstants.DB_ACCOUNTS_TABLENAME +
 				" SET balance=" + value + " WHERE accountno=" + accountNo + "";
 		SQLUtil.transactUpdate(execute);
 	}
 	
-	public static void incrementAccountBalance(String accountNo, Double value) {
+	public static void incrementAccountBalance(String accountNo, Double value) throws NumberFormatException, SQLException {
 		value += getAccountBalance(accountNo);
 		String execute = "UPDATE " + EconomosConstants.DB_ACCOUNTS_TABLENAME +
 				" SET balance=" + value + " WHERE accountno=" + accountNo + "";
 		SQLUtil.transactUpdate(execute);
 	}
 	
-	public static void decrementAccountBalance(String accountNo, Double value) {
+	public static void decrementAccountBalance(String accountNo, Double value) throws NumberFormatException, SQLException {
 		value = getAccountBalance(accountNo) - value;
 		String execute = "UPDATE " + EconomosConstants.DB_ACCOUNTS_TABLENAME +
 				" SET balance=" + value + " WHERE accountno=" + accountNo + "";
 		SQLUtil.transactUpdate(execute);
 	}
 	
-	public static void setWalletBalance(String playerName, Double value) {
+	public static double getWalletBalance(String playerName) throws NumberFormatException, SQLException {
+		return Double.parseDouble(SQLUtil.getInt("balance", EconomosConstants.DB_WALLET_TABLENAME, "user", playerName));
+	}
+	
+	public static void setWalletBalance(String playerName, Double value) throws SQLException {
 		String execute = "UPDATE " + EconomosConstants.DB_WALLET_TABLENAME +
 				" SET balance=" + value + " WHERE user='" + playerName + "'";
 		SQLUtil.transactUpdate(execute);
 	}
 	
-	public static void incrementWalletBalance(String playerName, Double value) {
+	public static void incrementWalletBalance(String playerName, Double value) throws NumberFormatException, SQLException {
 		value += getWalletBalance(playerName);
 		String execute = "UPDATE " + EconomosConstants.DB_WALLET_TABLENAME +
 				" SET balance=" + value + " WHERE user='" + playerName + "'";
 		SQLUtil.transactUpdate(execute);
 	}
 	
-	public static void decrementWalletBalance(String playerName, Double value) {
+	public static void decrementWalletBalance(String playerName, Double value) throws NumberFormatException, SQLException {
 		value = getWalletBalance(playerName) - value;
 		String execute = "UPDATE " + EconomosConstants.DB_WALLET_TABLENAME +
 				" SET balance=" + value + " WHERE user='" + playerName + "'";

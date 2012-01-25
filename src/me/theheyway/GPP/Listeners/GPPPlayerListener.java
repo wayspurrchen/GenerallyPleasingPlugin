@@ -1,5 +1,7 @@
 package me.theheyway.GPP.Listeners;
 
+import java.sql.SQLException;
+
 import me.theheyway.GPP.Constants;
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.AreYouExperienced.AYE;
@@ -47,7 +49,11 @@ public class GPPPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		String playerName = player.getName();
 		if(!AccountUtil.hasAccountant(playerName)) {
-			AccountUtil.createAccountant(playerName);
+			try {
+				AccountUtil.createAccountant(playerName);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Accountant created for " + player.getName() + ".");
 		} else if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Accountant already exists for " + player.getName() + ".");
 	}

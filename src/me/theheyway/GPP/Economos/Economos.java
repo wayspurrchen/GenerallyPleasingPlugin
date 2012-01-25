@@ -33,7 +33,7 @@ public class Economos {
 	public CashIn cashin;
 	public Shops shops;
 	
-	public Economos(GPP plugin) {
+	public Economos(GPP plugin) throws SQLException {
 		this.plugin = plugin;
 		
 		//Set up module config
@@ -57,19 +57,21 @@ public class Economos {
 		} else GPP.consoleInfo("[Economos] Shops disabled.");
 		
 		try {
-			dbConstruction();
+			economosDatabaseConstruction();
 			SQLUtil.getConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		//Core Economos commands
+		/*
 		plugin.getCommand("account").setExecutor(this.commands);
 		plugin.getCommand("balance").setExecutor(this.commands);
 		plugin.getCommand("setbalance").setExecutor(this.commands);
-		plugin.getCommand("pay").setExecutor(this.commands);
+		plugin.getCommand("pay").setExecutor(this.commands);*/
 		
 		Player players[] = GPP.server.getOnlinePlayers();
+		
 		if (Constants.VERBOSE) GPP.consoleInfo("[Economos] Generating Accountants for already online players...");
 		for (int i=0; i < players.length; i++) {
 			String playerName = players[i].getName();
@@ -85,12 +87,13 @@ public class Economos {
 		
 	}
 	
-	private void dbConstruction() throws SQLException {
+	private void economosDatabaseConstruction() throws SQLException {
 		if (!SQLUtil.databaseExists(Constants.MYSQL_DBNAME)) {
+			
 			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[Economos] Database not found. Creating...");
-			if (SQLUtil.createDatabase(Constants.MYSQL_DBNAME)) {
-				if (EconomosConstants.VERBOSE) GPP.consoleInfo("[Economos] Database " + Constants.MYSQL_DBNAME + " created. Yippee-kay-yay!");
-			}
+			SQLUtil.createDatabase(Constants.MYSQL_DBNAME);
+			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[Economos] Database " + Constants.MYSQL_DBNAME + " created. Yippee-kay-yay!");
+		
 		} else if (EconomosConstants.VERBOSE) GPP.consoleInfo("[Economos] Database found.");
 		
 		if (!SQLUtil.tableExists(EconomosConstants.DB_WALLET_TABLENAME)) {

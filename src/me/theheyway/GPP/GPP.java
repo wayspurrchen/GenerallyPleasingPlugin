@@ -1,5 +1,6 @@
 package me.theheyway.GPP;
 
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import me.theheyway.GPP.AreYouExperienced.AYE;
@@ -8,17 +9,28 @@ import me.theheyway.GPP.Listeners.GPPBlockListener;
 import me.theheyway.GPP.Listeners.GPPEntityListener;
 import me.theheyway.GPP.Listeners.GPPPlayerListener;
 import me.theheyway.GPP.Overlord.Overlord;
+import me.theheyway.GPP.Places.Places;
 import me.theheyway.GPP.Util.TimerUtil;
 
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
+
 public class GPP extends JavaPlugin {
 	
-	public static Server server; //Test commit by crogeniks yo
+	public static Server server;
 	
 	me.theheyway.GPP.Constants constants;
 	
@@ -26,11 +38,15 @@ public class GPP extends JavaPlugin {
 	me.theheyway.GPP.Overlord.Overlord overlord;
 	me.theheyway.GPP.AreYouExperienced.AYE aye;
 	me.theheyway.GPP.Economos.Economos economos;
+	me.theheyway.GPP.Places.Places places;
 	
 	//Listeners
 	me.theheyway.GPP.Listeners.GPPEntityListener entityListener = new GPPEntityListener(this);
 	me.theheyway.GPP.Listeners.GPPPlayerListener playerListener = new GPPPlayerListener(this); //lolz gppp
 	me.theheyway.GPP.Listeners.GPPBlockListener blockListener = new GPPBlockListener(this); // they make funny sounding consonants--GPPB!!! GPPB gppbbbgplfhth
+	
+	//ModuleManager
+	ModuleManager moduleManager;
 	
 	public static final Logger logger = Logger.getLogger("Minecraft");
 	
@@ -64,21 +80,9 @@ public class GPP extends JavaPlugin {
 		//For time management
 		new TimerUtil();
 		
-		overlord = new Overlord(this);
+		moduleManager = new ModuleManager(this);
 		
-		if (Constants.AREYOUEXPERIENCED_ENABLED) {
-			aye = new AYE(this);
-			GPP.consoleInfo("[GPP] AreYouExperienced module enabled.");
-		} else {
-			GPP.consoleInfo("[GPP] AreYouExperienced module disabled.");
-		}
 		
-		if (Constants.ECONOMOS_ENABLED) {
-			GPP.consoleInfo("[GPP] Economos module enabled.");
-			economos = new Economos(this);
-		} else {
-			GPP.consoleInfo("[GPP] Economos module disabled.");
-		}
 	}
 	
 	public void onDisable() {
@@ -101,6 +105,7 @@ public class GPP extends JavaPlugin {
 	public static void consoleWarn(String message) {
 		logger.warning(message);
 	}
+	
 
 	//Debug method
 	/*public void outConfigMap() {

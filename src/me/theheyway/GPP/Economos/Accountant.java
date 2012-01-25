@@ -1,5 +1,6 @@
 package me.theheyway.GPP.Economos;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import me.theheyway.GPP.GPP;
@@ -21,7 +22,7 @@ public class Accountant {
 	//Later note: it did!
 	private ArrayList<Account> accounts = new ArrayList<Account>();
 	
-	Accountant(String playerName) {
+	Accountant(String playerName) throws SQLException {
 		this.playerName = playerName;
 		if (!hasWallet()) createWallet();
 		
@@ -35,7 +36,7 @@ public class Accountant {
 		return playerName;
 	}
 	
-	protected void addAccount(String accountNumber) {
+	public void addAccount(String accountNumber) throws NumberFormatException, SQLException {
 		if (AccountUtil.hasAccountNo(playerName, accountNumber)) { //make sure it actually exists before creating
 			accounts.add(new Account(playerName,accountNumber));
 		} else {
@@ -43,7 +44,7 @@ public class Accountant {
 		}
 	}
 	
-	protected boolean removeAccount(Account account) {
+	public boolean removeAccount(Account account) {
 		try {
 			accounts.remove(account);
 			return true;
@@ -53,7 +54,7 @@ public class Accountant {
 		}
 	}
 	
-	protected boolean removeAccount(String accountno) {
+	public boolean removeAccount(String accountno) {
 		try {
 			accounts.remove(getAccountByNumber(accountno));
 			return true;
@@ -71,7 +72,7 @@ public class Accountant {
 		return null;
 	}
 	
-	protected double getAccountInterest(String accountno) {
+	protected double getAccountInterest(String accountno) throws NumberFormatException, SQLException {
 		return getAccountByNumber(accountno).getInterest();
 	}
 	
@@ -83,14 +84,14 @@ public class Accountant {
 		return accounts.size();
 	}
 	
-	public double getAccountBalance(String accountno) {
+	public double getAccountBalance(String accountno) throws NumberFormatException, SQLException {
 		Account acc = getAccountByNumber(accountno);
 		if (acc!=null) {
 			return acc.getBalance();
 		} else return -1.0;
 	}
 	
-	public void setAccountBalance(String accountno, double value) {
+	public void setAccountBalance(String accountno, double value) throws SQLException {
 		Account acc = getAccountByNumber(accountno);
 		if (acc!=null) {
 			acc.setBalance(value);
@@ -171,37 +172,39 @@ public class Accountant {
 	 * Checks if player has a wallet account set up in the database.
 	 * 
 	 * @return true if a player has a wallet account, false if not
+	 * @throws SQLException 
 	 */
-	public boolean hasWallet() {
+	public boolean hasWallet() throws SQLException {
 		if (SQLUtil.anyQualifiedValueExists(EconomosConstants.DB_WALLET_TABLENAME, "user", playerName)) return true;
 		else return false;
 	}
 	
 	/**
 	 * Create a basic wallet account tied to the player.
+	 * @throws SQLException 
 	 */
-	public void createWallet() {
+	public void createWallet() throws SQLException {
 		String execute = "INSERT INTO " + EconomosConstants.DB_WALLET_TABLENAME + " (user, balance)" +
 				" VALUES ('" + playerName + "', " + EconomosConstants.WALLET_INITIAL_BALANCE + ")";
 		SQLUtil.transactUpdate(execute);
 		if (EconomosConstants.VERBOSE) GPP.consoleInfo("[Economos] Individual wallet account created for " + playerName + ".");
 	}
 	
-	public String getFirstOwnedAccount() {
+	public String getFirstOwnedAccount() throws SQLException {
 		return SQLUtil.getInt("accountno", EconomosConstants.DB_ACCOUNTS_TABLENAME, "user", playerName);
 	}
 	
-	public double getWalletBalance() {
+	public double getWalletBalance() throws NumberFormatException, SQLException {
 		return Double.parseDouble(SQLUtil.getInt("balance", EconomosConstants.DB_WALLET_TABLENAME, "user", playerName));
 	}
 	
-	public void setWalletBalance(Double value) {
+	public void setWalletBalance(Double value) throws SQLException {
 		String execute = "UPDATE " + EconomosConstants.DB_WALLET_TABLENAME +
 				" SET balance=" + value + " WHERE user='" + playerName + "'";
 		SQLUtil.transactUpdate(execute);
 	}
 	
-	public void incrementWalletBalance(Double value) {
+	public void incrementWalletBalance(Double value) throws NumberFormatException, SQLException {
 		value += getWalletBalance();
 		String execute = "UPDATE " + EconomosConstants.DB_WALLET_TABLENAME +
 				" SET balance=" + value + " WHERE user='" + playerName + "'";

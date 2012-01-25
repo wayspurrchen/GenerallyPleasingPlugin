@@ -61,8 +61,7 @@ public class SQLUtil {
 		return exists;
 	}
 	
-	public static boolean createDatabase(String databaseName) throws SQLException {
-		
+	public static void createDatabase(String databaseName) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = SQLUtil.getDefaultConnection();
@@ -72,17 +71,13 @@ public class SQLUtil {
 			stmt.executeUpdate(transaction);
 			conn.commit();
 			conn.close();
-			return true;
 		} catch (SQLException e) {
-			try {
-				GPP.logger.severe("Rolled back transaction.");
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return false;
+			
+			throw new SQLException();
 		}
 	}
 	
@@ -97,7 +92,28 @@ public class SQLUtil {
 		return exists;
 	}
 	
-	public static boolean transactUpdate(String execute) {
+	public static void dropTable(String tableName) throws SQLException {
+		
+		Connection conn = null;
+		try {
+			conn = SQLUtil.getConnection();
+			String transaction = "DROP TABLE " + tableName;
+			conn.setAutoCommit(false);
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(transaction);
+			conn.commit();
+			conn.close();
+		} catch (SQLException e) {
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
+			e.printStackTrace();
+			
+			throw new SQLException();
+		}
+	}
+	
+	public static void transactUpdate(String execute) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = SQLUtil.getConnection();
@@ -106,55 +122,33 @@ public class SQLUtil {
 			stmt.executeUpdate(execute);
 			conn.commit();
 			conn.close();
-			return true;
 		} catch (SQLException e) {
-			try {
-				GPP.logger.severe("Rolled back transaction.");
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return false;
+			
+			throw new SQLException();
 		}
 	}
 	
-	/*
-	//In retrospect this makes no sense, it can't return the ResultSet if the connection is closed already. FARTS
-	public static ResultSet transactQuery(String query) {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			Statement stat = conn.createStatement();
-			conn.setAutoCommit(false);
-			ResultSet rs = stat.executeQuery(query);
-			conn.commit();
-			conn.close();
-			return rs;
-		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-			return null;
-		}
-	}*/
-	
-	public static boolean anyQualifiedValueExists(String table, String column, String qualifier) {
+	public static boolean anyQualifiedValueExists(String table, String column, String qualifier) throws SQLException {
 		return specificQualifiedValueExists(table, "*", column, qualifier);
 	}
 	
-	public static boolean specificQualifiedValueExists(String table, String value, String column, String qualifier) {
+	public static boolean specificQualifiedValueExists(String table, String value, String column, String qualifier) throws SQLException {
+		String newQualifier = "";
+		
+		//Puts the qualifier in quotes if it's not a number
+		if (TypeUtil.isDouble(qualifier)) newQualifier = qualifier;
+		else newQualifier = "'" + qualifier + "'";
+		
 		String query = "SELECT " + value + " FROM " + table +
-				" WHERE " + column + "='" + qualifier + "'";
+				" WHERE " + column + "=" + newQualifier;
 		return queryExistence(query);
 	}
 	
-	private static boolean queryExistence(String queryString) {
+	private static boolean queryExistence(String queryString) throws SQLException {
 		String query = queryString;
 		Connection conn = null;
 		try {
@@ -168,18 +162,16 @@ public class SQLUtil {
 			conn.close();
 			return exists;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return false;
+			
+			throw new SQLException();
 		}
 	}
 	
-	public static ArrayList<String> getIntValues(String value, String table, String column, String qualifier, int columnRequest) {
+	public static ArrayList<String> getIntValues(String value, String table, String column, String qualifier, int columnRequest) throws SQLException {
 		String query = "SELECT " + value + " FROM " + table +
 				" WHERE " + column + "='" + qualifier + "'";
 		Connection conn = null;
@@ -197,18 +189,16 @@ public class SQLUtil {
 			conn.close();
 			return values;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	
-	public static ArrayList<String> getStringValues(String value, String table, String column, String qualifier, int columnRequest) {
+	public static ArrayList<String> getStringValues(String value, String table, String column, String qualifier, int columnRequest) throws SQLException {
 		String query = "SELECT " + value + " FROM " + table +
 				" WHERE " + column + "='" + qualifier + "'";
 		Connection conn = null;
@@ -226,18 +216,16 @@ public class SQLUtil {
 			conn.close();
 			return values;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	
-	public static ArrayList<String> getDoubleValues(String value, String table, String column, String qualifier, int columnRequest) {
+	public static ArrayList<String> getDoubleValues(String value, String table, String column, String qualifier, int columnRequest) throws SQLException {
 		String query = "SELECT " + value + " FROM " + table +
 				" WHERE " + column + "='" + qualifier + "'";
 		Connection conn = null;
@@ -255,14 +243,12 @@ public class SQLUtil {
 			conn.close();
 			return values;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	
@@ -271,7 +257,7 @@ public class SQLUtil {
 	
 	//However, the single-parameter version of these functions will accept any query, allowing for more complex queries.
 	
-	public static String getInt(String value, String table, String column, String qualifier) {
+	public static String getInt(String value, String table, String column, String qualifier) throws SQLException {
 		//TODO: Add conditionals for this and similar functions for checking double/integer/string values passed
 		//so we can check whether or not the query should have quotation marks for some values.
 		String query = "SELECT " + value + " FROM " + table +
@@ -279,7 +265,7 @@ public class SQLUtil {
 		return getInt(query);
 	}
 	
-	public static String getString(String value, String table, String column, String qualifier) {
+	public static String getString(String value, String table, String column, String qualifier) throws SQLException {
 		//TODO: Add conditionals for this and similar functions for checking double/integer/string values passed
 		//so we can check whether or not the query should have quotation marks for some values.
 		String query = "SELECT " + value + " FROM " + table +
@@ -287,7 +273,7 @@ public class SQLUtil {
 		return getString(query);
 	}
 	
-	public static String getDouble(String value, String table, String column, String qualifier) {
+	public static String getDouble(String value, String table, String column, String qualifier) throws SQLException {
 		//TODO: Add conditionals for this and similar functions for checking double/integer/string values passed
 		//so we can check whether or not the query should have quotation marks for some values.
 		String query = "SELECT " + value + " FROM " + table +
@@ -295,7 +281,7 @@ public class SQLUtil {
 		return getDouble(query);
 	}
 	
-	public static String getInt(String SQLquery) {
+	public static String getInt(String SQLquery) throws SQLException {
 		String query = SQLquery;
 		Connection conn = null;
 		try {
@@ -303,24 +289,22 @@ public class SQLUtil {
 			Statement stat = conn.createStatement();
 			conn.setAutoCommit(false);
 			ResultSet rs = stat.executeQuery(query);
-			rs.next();
+			if (!rs.next()) return null;
 			String accountno = String.valueOf(rs.getInt(1));
 			conn.commit();
 			conn.close();
 			return accountno;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	
-	public static String getString(String SQLquery) {
+	public static String getString(String SQLquery) throws SQLException {
 		String query = SQLquery;
 		Connection conn = null;
 		try {
@@ -328,24 +312,22 @@ public class SQLUtil {
 			Statement stat = conn.createStatement();
 			conn.setAutoCommit(false);
 			ResultSet rs = stat.executeQuery(query);
-			rs.next();
+			if (!rs.next()) return null;
 			String accountno = String.valueOf(rs.getString(1));
 			conn.commit();
 			conn.close();
 			return accountno;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	
-	public static String getDouble(String SQLquery) {
+	public static String getDouble(String SQLquery) throws SQLException {
 		String query = SQLquery;
 		Connection conn = null;
 		try {
@@ -353,24 +335,50 @@ public class SQLUtil {
 			Statement stat = conn.createStatement();
 			conn.setAutoCommit(false);
 			ResultSet rs = stat.executeQuery(query);
-			rs.next();
+			if (!rs.next()) return null;
 			String accountno = String.valueOf(rs.getDouble(1));
 			conn.commit();
 			conn.close();
 			return accountno;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	
-	public static String[] getTop(String value, String table, String orderby, int count) {
+	public static double[] getTopDoubles(String value, String table, String orderby, int count) throws SQLException {
+		String query = "SELECT " + value + " FROM " + table
+				+ " ORDER BY " + orderby + " DESC";
+		double[] tops = new double[count];
+		Connection conn = null;
+		try {
+			conn = SQLUtil.getConnection();
+			Statement stat = conn.createStatement();
+			conn.setAutoCommit(false);
+			ResultSet rs = stat.executeQuery(query);
+			if (!rs.next()) return null;
+			for (int i = 0; i < count; i++) {
+				if (!rs.isAfterLast()) tops[i] = rs.getDouble(1);
+				else break;
+			}
+			conn.commit();
+			conn.close();
+			return tops;
+		} catch (SQLException e) {
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
+			e.printStackTrace();
+			
+			throw new SQLException();
+		}
+	}
+	
+	public static String[] getTopStrings(String value, String table, String orderby, int count) throws SQLException {
 		String query = "SELECT " + value + " FROM " + table
 				+ " ORDER BY " + orderby + " DESC";
 		String[] tops = new String[count];
@@ -380,22 +388,21 @@ public class SQLUtil {
 			Statement stat = conn.createStatement();
 			conn.setAutoCommit(false);
 			ResultSet rs = stat.executeQuery(query);
+			if (!rs.next()) return null;
 			for (int i = 0; i < count; i++) {
-				if (rs.next()) tops[i] = String.valueOf(rs.getDouble(i+1));
+				if (!rs.isAfterLast()) tops[i] = rs.getString(1);
 				else break;
 			}
 			conn.commit();
 			conn.close();
 			return tops;
 		} catch (SQLException e) {
-			try {
-				conn.rollback();
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			GPP.logger.severe("Rolled back transaction.");
+			conn.rollback();
+			conn.close();
 			e.printStackTrace();
-			return null;
+			
+			throw new SQLException();
 		}
 	}
 	

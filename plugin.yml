@@ -23,6 +23,18 @@ commands:
     aliases: [reloadchunk, chunkreload]
     permission: gpp.general.cr
     usage: /cr, /reloadchunk, /chunkreload - reloads nearby chunks
+  page:
+    description: Go to a specific page.
+    permission: gpp.secretary
+    usage: /page
+  next:
+    description: Next page.
+    permission: gpp.secretary
+    usage: /next
+  prev:
+    description: Previous page.
+    permission: gpp.secretary
+    usage: /prev
   flip:
     description: Flips a coin
     aliases: [flipcoin]
@@ -149,6 +161,9 @@ permissions:
   gpp.general.heal:
     description: Heal a player
     default: op
+  gpp.secretary:
+    description: Allows player to use secretary.
+    default: true
   gpp.cruelty.freeze:
     description: Freeze or unfreeze a player.
     default: op
