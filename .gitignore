@@ -28,6 +28,7 @@
 
 # OS generated files #
 ######################
+config.yml
 .DS_Store*
 ehthumbs.db
 Icon?
