@@ -27,7 +27,6 @@ public class Constants {
 	public static boolean ECONOMOS_ENABLED;
 	public static boolean PLACES_ENABLED;
 	
-	
 	public GPP plugin;
 	
 	public Constants(GPP plugin) {

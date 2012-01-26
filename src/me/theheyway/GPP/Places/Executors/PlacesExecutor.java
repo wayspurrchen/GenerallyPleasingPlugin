@@ -13,8 +13,9 @@ import me.theheyway.GPP.Executor;
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.Overlord.Cruelty;
 import me.theheyway.GPP.Overlord.Overlord;
+import me.theheyway.GPP.Places.Place;
+import me.theheyway.GPP.Places.PlaceUtil;
 import me.theheyway.GPP.Util.CommandUtil;
-import me.theheyway.GPP.Util.PlaceUtil;
 import me.theheyway.GPP.Util.SQLUtil;
 import me.theheyway.GPP.Util.GenUtil;
 import me.theheyway.GPP.Util.MiscUtil;
@@ -35,8 +36,8 @@ import org.bukkit.entity.Player;
 
 public class PlacesExecutor extends Executor {
 	
-	private static void teleportToBlock(Player player, Player subject) {
-		Block targetBlock = player.getTargetBlock(null, 70);
+	public static void teleportPlayerToHome(Player executor, Player teleporter, String playerHome) {
+		Block targetBlock = executor.getTargetBlock(null, 70);
 		Block aboveBlock = targetBlock.getRelative(BlockFace.UP, 1);
 		while (aboveBlock.getType()!=Material.AIR) {
 			aboveBlock = aboveBlock.getRelative(BlockFace.UP, 1);
@@ -44,12 +45,12 @@ public class PlacesExecutor extends Executor {
 		targetBlock = aboveBlock;
 		Location targetLoc = targetBlock.getLocation();
 		targetLoc.add(.5, 0, .5); // So we're on top of, and in the center of the block
-		targetLoc.setYaw(player.getLocation().getYaw());
-		targetLoc.setPitch(player.getLocation().getPitch());
-		subject.teleport(targetLoc);
+		targetLoc.setYaw(executor.getLocation().getYaw());
+		targetLoc.setPitch(executor.getLocation().getPitch());
+		teleporter.teleport(targetLoc);
 	}
 	
-	private static boolean setHome(Player caller, String playerName) throws SQLException {
+	public static boolean setHome(Player caller, String playerName) throws SQLException {
 		Location loc = caller.getLocation();
 		int x = (int) loc.getX();
 		int y = (int) loc.getY();

@@ -33,37 +33,31 @@ public class EconomosCommands implements CommandExecutor {
 		Player executor = (Player) sender;
 		String executorName = executor.getName();
 		Arguments args = new Arguments(arguments);
-		
-		if (EconomosConstants.ECONOMY_ENABLED) {
 
-			//Balance command
-			if (CommandUtil.cmdEquals(command, "balance")) {
-				try {
-					if (WalletBalanceHandler.direct(executor, args)) return true;
-				} catch (GPPException e) {
-					executor.sendMessage(e.getMessage());
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return true;
-			//Account command
-			} else if (CommandUtil.cmdEquals(command, "account")) {
-				try {
-					if (AccountHandler.direct(executor, args)) return true;
-					else return false;
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} catch (GPPException e) {
-					executor.sendMessage(e.getMessage());
-				}
-				
+		//Balance command
+		if (CommandUtil.cmdEquals(command, "balance")) {
+			try {
+				if (WalletBalanceHandler.direct(executor, args)) return true;
+			} catch (GPPException e) {
+				executor.sendMessage(e.getMessage());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return true;
+		//Account command
+		} else if (CommandUtil.cmdEquals(command, "account")) {
+			try {
+				if (AccountHandler.direct(executor, args)) return true;
+				else return false;
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (GPPException e) {
+				executor.sendMessage(e.getMessage());
 			}
 			
-		} else executor.sendMessage(ChatColor.GRAY + "Economos Economy module is not enabled on this server. " +
-					"Don't ask me why they even have this plugin installed.");
+		}
 		
 		return true;
 	}

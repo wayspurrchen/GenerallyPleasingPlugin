@@ -47,27 +47,7 @@ public class Places {
 			if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database " + Constants.MYSQL_DBNAME + " created. Yippee-kay-yay!");
 		} else if (EconomosConstants.VERBOSE) GPP.consoleInfo("[GPP] Database found.");
 		
-		/*if (!SQLUtil.tableExists(DB_LOCATIONS_TABLENAME)) {
-			GPP.logger.info("[GPP] Locations MySQL table not found; creating....");
-			Connection conn = SQLUtil.getConnection();
-			Statement stmt = conn.createStatement();
-			conn.setAutoCommit(false);
-			String execute = "CREATE TABLE " + DB_LOCATIONS_TABLENAME +
-					" (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, " +
-					"type CHAR(128) NOT NULL, " +
-					"name CHAR(128) NOT NULL, " +
-					"owner CHAR(128) NOT NULL, " +
-					"world CHAR(128) NOT NULL," +
-					"x DOUBLE NOT NULL," +
-					"y DOUBLE NOT NULL," +
-					"z DOUBLE NOT NULL," +
-					"yaw DOUBLE NOT NULL)";
-			stmt.executeUpdate(execute);
-			conn.commit();
-			conn.close();
-			GPP.logger.info("[GPP] Locations MySQL database table created.");
-		} else GPP.logger.info("[GPP] Locations table found.");*/
-		
+		//Create Places DB if it doesn't exist
 		if (!SQLUtil.tableExists(DB_PLACES_TABLENAME)) {
 			GPP.logger.info("[GPP] Places MySQL table not found; creating....");
 			Connection conn = SQLUtil.getConnection();
@@ -98,6 +78,9 @@ public class Places {
 			GPP.logger.info("[GPP] Places MySQL table created.");
 		} else GPP.logger.info("[GPP] Places table found.");
 		
+		//If the old Locations DB exists, transfer its data to the Places DB and drop the old table.
+		//WARNING: This does not check for duplicate entries, so it should never be run twice. Make
+		//sure the old table gets dropped.
 		if (SQLUtil.tableExists(DB_LOCATIONS_TABLENAME)) {
 			GPP.logger.info("[GPP] Leftover Locations database found; attempting to transfer data.");
 			Connection conn = SQLUtil.getConnection();

@@ -50,12 +50,12 @@ commands:
     usage: /freeze <player> - freezes/unfreezes a player
   home:
     description: Teleport home.
-    permission: gpp.ports.home
-    usage: /home - teleports you home
+    permission: gpp.places.home
+    usage: /home - teleplaces you home
   jumpto:
     description: Jump to crosshair location.
     aliases: [j]
-    permission: gpp.ports.jumpto
+    permission: gpp.places.jumpto
     usage: /jumpto, /j - jump to crosshair location
   point:
     description: Point your compass to spot.
@@ -63,36 +63,36 @@ commands:
     usage: /point - make your compass point to a location
   put:
     description: Teleport player to your crosshair.
-    permission: gpp.ports.put
+    permission: gpp.places.put
     usage: /put <player> - teleport player to crosshair
   sethome:
     description: Set home.
-    permission: gpp.ports.sethome
+    permission: gpp.places.sethome
     usage: /sethome - sets your home point
   setspawn:
     description: Set world spawn point.
-    permission: gpp.ports.setspawn
+    permission: gpp.places.setspawn
     usage: /setspawn - sets the world spawn point
   spawn:
     description: Teleport to spawn.
-    permission: gpp.ports.spawn
-    usage: /spawn - teleports you to spawn
+    permission: gpp.places.spawn
+    usage: /spawn - teleplaces you to spawn
   strip:
     description: Strip a player of select items.
     permission: gpp.overlord.strip
     usage: /strip <player> <itemlist> - strips a player of select items
   summon:
     description: Teleport someone to you.
-    permission: gpp.ports.summon
-    usage: /summon <player> - teleports someone to you
+    permission: gpp.places.summon
+    usage: /summon <player> - teleplaces someone to you
   test:
     description: I have no idea what this does.
     usage: /test
   tp:
     description: Teleport to another player.
     aliases: [teleport]
-    permission: gpp.ports.tp
-    usage: /teleport, /tp - teleports you to another player
+    permission: gpp.places.tp
+    usage: /teleport, /tp - teleplaces you to another player
   balance:
     description: Displays your balance.
     aliases: [bal, cash, chingching, dough, money, wallet]
@@ -176,37 +176,40 @@ permissions:
   gpp.overlord.strip:
     description: Strip certain items from a player.
     default: op
-  gpp.ports.home:
+  gpp.places.home:
     description: Teleport home.
     default: true
-  gpp.ports.jumpto:
+  gpp.places.homeo:
+    description: Teleport to another's home.
+    default: true
+  gpp.places.jumpto:
     description: Jump to location in crosshair.
     default: op
-  gpp.ports.put:
+  gpp.places.put:
     description: Teleport player to your crosshair.
     default: op
-  gpp.ports.sethome:
+  gpp.places.sethome:
     description: Set home.
     default: true
-  gpp.ports.sethomeo:
+  gpp.places.sethomeo:
     description: Set the home of others.
     default: op
-  gpp.ports.setspawn:
+  gpp.places.setspawn:
     description: Set world spawn point.
     default: op
-  gpp.ports.spawn:
+  gpp.places.spawn:
     description: Teleport to spawn.
     default: true
-  gpp.ports.summon:
+  gpp.places.summon:
     description: Teleport someone to you.
     default: op
-  gpp.ports.summonall:
+  gpp.places.summonall:
     description: Teleport everyone in the server to you.
     default: op
-  gpp.ports.tp:
+  gpp.places.tp:
     description: Teleport to another player.
     default: op
-  gpp.ports.tpother:
+  gpp.places.tpother:
     description: Teleport other players.
     default: op
   gpp.economos.access:
