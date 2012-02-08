@@ -85,12 +85,17 @@ public class Place {
 	public void insert() throws SQLException {
 		if (!exists()) {
 			PlaceUtil.insertPlace(this);
-		}
+		} else throw new SQLException("Place already exists!");
 	}
 	
+	/**
+	 * Generates a location object from this Place's location data.
+	 * 
+	 * @return
+	 */
 	public Location generateLocation() {
 		Location loc = new Location(GPP.server.getWorld(world), x1, y1, z1);
-		loc.setY(yaw);
+		loc.setYaw((float) yaw);
 		return loc;
 	}
 

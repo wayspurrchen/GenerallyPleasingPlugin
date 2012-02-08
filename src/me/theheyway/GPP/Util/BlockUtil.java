@@ -2,10 +2,35 @@ package me.theheyway.GPP.Util;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 public class BlockUtil {
+	
+	/**
+	 * Gets the topmost exposed block to the air. Nether-safe.
+	 * 
+	 * @param world
+	 * @param x
+	 * @param z
+	 * @return
+	 */
+	public static Block getSurfaceBlockFromTopOfWorld(World world, double x, double z) {
+		Location loc = new Location(world, x, 127, z);
+		Block block = loc.getBlock();
+		if (block.getType()!=Material.AIR) {
+			while (block.getType()!=Material.AIR) {
+				block = block.getRelative(BlockFace.DOWN);
+			}
+		}
+		
+		while (block.getType()==Material.AIR) {
+			block = block.getRelative(BlockFace.DOWN);
+		}
+		
+		return block;
+	}
 	
 	/**
 	 * Gets the location of the center of the bottom of a block from the block passed to the function.
@@ -64,6 +89,22 @@ public class BlockUtil {
 		
 		return locationBlock;
 	}
+	/* this shit don't work!
+	 * Location loc = location;
+		loc.setY(128);
+		Block locationBlock = location.getBlock();
+		
+		//Not air? Go down to air
+		while (locationBlock.getType()!=Material.AIR) {
+			locationBlock.getRelative(BlockFace.DOWN);
+		}
+		
+		//Not a block? Go down 'til we hit a block
+		while (locationBlock.getType()==Material.AIR) {
+			locationBlock.getRelative(BlockFace.DOWN);
+		}
+	 * 
+	 */
 	
 	/**
 	 * Returns the next air block above the current block (usually used to avoid teleporting into solid blocks).
@@ -72,10 +113,14 @@ public class BlockUtil {
 	 * @return
 	 */
 	public static Block getSurfaceBlock(Block block) {
-		Block aboveBlock = block.getRelative(BlockFace.UP);
+		Block aboveBlock = block;
 		while (aboveBlock.getType()!=Material.AIR) {
-			aboveBlock = aboveBlock.getRelative(BlockFace.UP);
+			if (aboveBlock.getY()<127) aboveBlock = aboveBlock.getRelative(BlockFace.UP);
+			else {
+				break;
+			}
 		}
+		if (aboveBlock.getType()!=Material.AIR) aboveBlock = null;
 		return aboveBlock;
 	}
 

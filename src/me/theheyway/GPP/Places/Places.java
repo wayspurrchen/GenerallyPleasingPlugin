@@ -25,8 +25,8 @@ public class Places {
 	
 	public static final String SPAWNS_FILE_PATH = "plugins/GPP/spawns.data";
 	
-	public File SPAWNS_FILE = new File(SPAWNS_FILE_PATH);
-	public FileConfiguration SPAWNS_FILECONFIG = null;
+	public static File SPAWNS_FILE = new File(SPAWNS_FILE_PATH);
+	public static FileConfiguration SPAWNS_FILECONFIG = null;
 
 	public Places(GPP plugin) {
 		this.plugin = plugin;
@@ -93,24 +93,24 @@ public class Places {
 			conn.commit();
 			conn.close();
 			GPP.logger.info("[GPP] Places MySQL table updated.");
-			GPP.logger.info("[GPP] Dropping old Locations table.");
-			SQLUtil.dropTable(DB_LOCATIONS_TABLENAME);
-			GPP.logger.info("[GPP] Locations table dropped.");
+			//GPP.logger.info("[GPP] Dropping old Locations table.");
+			//SQLUtil.dropTable(DB_LOCATIONS_TABLENAME);
+			//GPP.logger.info("[GPP] Locations table dropped.");
 		}
 	}
 	
-	public FileConfiguration getSpawnYaws() {
+	public static FileConfiguration getSpawnYaws() {
 		if (SPAWNS_FILECONFIG == null) {
 			reloadSpawnYaws();
 		}
 		return SPAWNS_FILECONFIG;
 	}
 	
-	public void reloadSpawnYaws() {
+	public static void reloadSpawnYaws() {
 		SPAWNS_FILECONFIG = YamlConfiguration.loadConfiguration(SPAWNS_FILE);
 	}
 
-	public void saveSpawnYaws() {
+	public static void saveSpawnYaws() {
 		try {
 			SPAWNS_FILECONFIG.save(SPAWNS_FILE_PATH);
 	    } catch (IOException ex) {

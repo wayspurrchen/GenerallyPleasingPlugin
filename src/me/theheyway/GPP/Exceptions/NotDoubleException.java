@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 public class NotDoubleException extends InvalidArgumentException {
 	
 	public NotDoubleException() {
-		super(ChatColor.DARK_RED + "Argument is not a numeric point value.");
+		super("Argument is not a numeric point value.");
 	}
 	
 	public NotDoubleException(String message) {

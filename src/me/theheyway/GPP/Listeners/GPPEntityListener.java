@@ -48,8 +48,6 @@ public class GPPEntityListener extends EntityListener {
 		if (ent instanceof Player) {
 			if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK
 					|| event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION 
-					|| event.getCause() == EntityDamageEvent.DamageCause.FIRE
-					|| event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK
 					|| event.getCause() == EntityDamageEvent.DamageCause.LIGHTNING //THAT'S RIGHT, YOU CAN GET EXPERIENCED BY BEING STRUCK BY LIGHTNING. HOW HARDCORE IS THAT?!
 					|| event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE
 					|| event.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {

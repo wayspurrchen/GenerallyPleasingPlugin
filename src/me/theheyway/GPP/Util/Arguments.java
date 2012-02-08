@@ -1,7 +1,9 @@
 package me.theheyway.GPP.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import me.theheyway.GPP.GPP;
@@ -57,6 +59,24 @@ public class Arguments {
 	
 	public String getPlayerNameMatch(int index) {
 		return GenUtil.getPlayerMatchString((args.get(index)));
+	}
+	
+	public World getWorldExact(int index) {
+		return GPP.server.getWorld(getString(0));
+	}
+	
+	public World getWorldMatch(int index) {
+		List<World> worlds = GPP.server.getWorlds();
+		World matchWorld = null;
+		if (GPP.server.getWorld(getString(index))==null) {
+			for (int i=0; i < worlds.size(); i++) {
+				if (worlds.get(i).getName().startsWith(getString(index).toLowerCase())) {
+					matchWorld = worlds.get(i);
+					break;
+				}
+			}
+		} else matchWorld = GPP.server.getWorld(getString(index));
+		return matchWorld;
 	}
 	
 

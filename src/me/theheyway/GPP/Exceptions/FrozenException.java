@@ -1,15 +1,17 @@
 package me.theheyway.GPP.Exceptions;
 
+import me.theheyway.GPP.Colors;
+
 import org.bukkit.ChatColor;
 
-public class FrozenException extends Exception {
+public class FrozenException extends GPPException {
 
 	public FrozenException() {
-		super();
+		super("You are frozen and cannot teleportation commands.");
 	}
 	
 	public FrozenException(String message) {
-		super(ChatColor.DARK_RED + message);
+		super(message);
 	}
 	
 }

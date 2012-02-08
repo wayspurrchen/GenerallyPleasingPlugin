@@ -1,5 +1,7 @@
 package me.theheyway.GPP.Exceptions;
 
+import me.theheyway.GPP.Colors;
+
 import org.bukkit.ChatColor;
 
 public class GPPException extends Exception {
@@ -9,7 +11,7 @@ public class GPPException extends Exception {
 	}
 	
 	public GPPException(String message) {
-		super(ChatColor.DARK_RED + message);
+		super(Colors.ERROR + message);
 	}
 	
 }

@@ -126,6 +126,9 @@ permissions:
   gpp.aye.allowed.miningexp:
     description: Allows players to get EXP from mining.
     default: true
+  gpp.aye.allowed.placeore:
+    description: Allows players to place ore blocks.
+    default: op
   gpp.access:
     description: Top level access required to use any GPP command.
     default: true
@@ -181,7 +184,7 @@ permissions:
     default: true
   gpp.places.homeo:
     description: Teleport to another's home.
-    default: true
+    default: op
   gpp.places.jumpto:
     description: Jump to location in crosshair.
     default: op

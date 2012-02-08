@@ -133,9 +133,13 @@ public class OverlordCommands implements CommandExecutor {
 			for (int i = -3; i < 4; i++) { // -3 to 3 for X
 				for (int j = -3; j < 4; j++) { // -3 to 3 for Z
 					Chunk newChunk = player.getWorld().getChunkAt(x + i, z + j);
-					GPP.logger.info(player.getName() + " reloaded chunk ("
-							+ (x + i) + "," + (z + i) + ").");
 					newChunk.unload(true);
+				}
+			}
+			
+			for (int i = -3; i < 4; i++) { // -3 to 3 for X
+				for (int j = -3; j < 4; j++) { // -3 to 3 for Z
+					Chunk newChunk = player.getWorld().getChunkAt(x + i, z + j);
 					newChunk.load(true);
 				}
 			}

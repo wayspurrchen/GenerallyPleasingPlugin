@@ -1,5 +1,6 @@
 package me.theheyway.GPP.Listeners;
 
+import me.theheyway.GPP.Colors;
 import me.theheyway.GPP.GPP;
 import me.theheyway.GPP.AreYouExperienced.AYE;
 import me.theheyway.GPP.AreYouExperienced.AYEConstants;
@@ -7,10 +8,13 @@ import me.theheyway.GPP.AreYouExperienced.AYEConstants;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.block.BlockPlaceEvent;
 
-public class GPPBlockListener extends BlockListener {
+public class GPPBlockListener implements Listener {
 	
     public GPP plugin;
     
@@ -18,6 +22,7 @@ public class GPPBlockListener extends BlockListener {
         this.plugin = plugin;
     }
 	
+    @EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		if (player.hasPermission("gpp.aye.allowed.miningexp")) {
@@ -51,6 +56,20 @@ public class GPPBlockListener extends BlockListener {
 				}
 				//GPP.consoleInfo("exPBonus s after multiplier: " +expBonus);
 				AYE.addAccumulatedExp(player, expBonus);
+			}
+		}
+	}
+	
+    @EventHandler
+	public void onBLockPlace(BlockPlaceEvent event) {
+		Block block = event.getBlockPlaced();
+		Material blockType = block.getType();
+		if (blockType == Material.DIAMOND_ORE || blockType == Material.COAL_ORE || 
+				blockType == Material.IRON_ORE || blockType == Material.GOLD_ORE ||
+				blockType == Material.LAPIS_ORE) {
+			if (!event.getPlayer().hasPermission("gpp.aye.allowed.placeore")) {
+				event.getPlayer().sendMessage(Colors.ERROR + "You do not have permission to place ore blocks. Please ask a moderator.");
+				event.setBuild(false);
 			}
 		}
 	}
