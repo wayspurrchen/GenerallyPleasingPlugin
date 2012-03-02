@@ -23,6 +23,7 @@ import me.theheyway.GPP.Places.Handlers.SetSpawnHandler;
 import me.theheyway.GPP.Places.Handlers.SpawnHandler;
 import me.theheyway.GPP.Places.Handlers.SummonHandler;
 import me.theheyway.GPP.Places.Handlers.TeleportHandler;
+import me.theheyway.GPP.Places.Handlers.WarpHandler;
 import me.theheyway.GPP.Util.Arguments;
 import me.theheyway.GPP.Util.CommandUtil;
 import me.theheyway.GPP.Util.SQLUtil;
@@ -77,6 +78,8 @@ public class PlacesCommands implements CommandExecutor {
 				SummonHandler.direct(executor, args);
 			} else if (CommandUtil.cmdEquals(command, "tp")) {
 				TeleportHandler.direct(executor, args);
+			} else if (CommandUtil.cmdEquals(command, "warp")) {
+				WarpHandler.direct(executor, args);
 			}
 		} catch (GPPException e) {
 			executor.sendMessage(e.getMessage());

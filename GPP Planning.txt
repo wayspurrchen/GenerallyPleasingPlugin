@@ -1,0 +1,16 @@
+what do I need for a dynamic help/argument detecting system?
+
+/help command should:
+show information, and /commands
+
+/commands, /cmd, /cmds
+
+
+Command Object:
+Holds the root command, related permission, and related help/usage information
+Holds the arguments, related permission, and related help/usage information
+
+Match input strings to command arguments
+
+Need a basic Command object
+Then we need a base object that holds individual commands, root perms for 

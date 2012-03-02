@@ -93,9 +93,9 @@ public class Places {
 			conn.commit();
 			conn.close();
 			GPP.logger.info("[GPP] Places MySQL table updated.");
-			//GPP.logger.info("[GPP] Dropping old Locations table.");
-			//SQLUtil.dropTable(DB_LOCATIONS_TABLENAME);
-			//GPP.logger.info("[GPP] Locations table dropped.");
+			GPP.logger.info("[GPP] Dropping old Locations table.");
+			SQLUtil.dropTable(DB_LOCATIONS_TABLENAME);
+			GPP.logger.info("[GPP] Locations table dropped.");
 		}
 	}
 	

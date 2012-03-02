@@ -70,6 +70,7 @@ public class ModuleManager {
 			plugin.getCommand("setspawn").setExecutor(places.commands);
 			plugin.getCommand("summon").setExecutor(places.commands);
 			plugin.getCommand("tp").setExecutor(places.commands);
+			plugin.getCommand("warp").setExecutor(places.commands);
 			
 		} else {
 			GPP.consoleInfo("[GPP] Places module disabled.");

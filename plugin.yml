@@ -93,6 +93,11 @@ commands:
     aliases: [teleport]
     permission: gpp.places.tp
     usage: /teleport, /tp - teleplaces you to another player
+  warp:
+    description: Warp to a warp.
+    aliases: [wp]
+    permission: gpp.places.warp
+    usage: /warp <warp>
   balance:
     description: Displays your balance.
     aliases: [bal, cash, chingching, dough, money, wallet]
